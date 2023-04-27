@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  app:
+    container_name: app
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    links:
+      - mongo
+    networks:
+      - webnet
+  redis:
+    env_file:
+      - .env
+    image: redis
+    environment:
+      - REDIS_URL=${REDIS_URL}
+    networks:
+      - webnet
+  mongo:
+    container_name: mongo
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - webnet
+networks:
+  webnet:
