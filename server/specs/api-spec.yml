@@ -1,0 +1,857 @@
+openapi: 3.0.0
+info:
+  title: "Irembo Account-Management Service"
+  description: "This service provides endpoints for all `account management` related interactions"
+  version: 1.0.0
+  contact:
+    name: "AKEJU FATAI"
+    email: "fatai@mail.com"
+
+x-organization: irembo
+x-service-id: api
+
+servers:
+  - description: Staging Ingress
+    url: https://api.irembo
+
+tags:
+  - name: auth
+    description: "Authentication related endpoints"
+  - name: account
+    description: "Account related endpoints"
+
+security:
+  - bearerToken: [ ]
+
+paths:
+  /auth/register:
+    post:
+      summary: "User Registration"
+      description: "User Registration"
+      operationId: registerUser
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "auth"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUserDto"
+      responses:
+        "201":
+          description: "Created"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusDto"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /auth/login:
+    post:
+      summary: "User Login"
+      description: "User Login"
+      operationId: login
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "auth"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDto"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "429":
+          $ref: "#/components/responses/TooManyRequestError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /auth/twoFa/verify:
+    post:
+      summary: "Verify 2FA"
+      description: "Verify 2FA"
+      operationId: verifyTwoFa
+      x-visibility: public
+      tags:
+        - "auth"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyTwoFaDto"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyTwoFaResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "429":
+          $ref: "#/components/responses/TooManyRequestError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /auth/logout:
+    post:
+      summary: "User Logout"
+      description: "User Logout"
+      operationId: logout
+      x-visibility: public
+      tags:
+        - "auth"
+      responses:
+        # MAYBE USE `204` RESPONSE CODE HERE
+        "200":
+          $ref: "#/components/responses/StatusResponse"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /auth/password/reset/send-link:
+    post:
+      summary: "Send Password Reset Link"
+      description: "Send Password Reset Link"
+      operationId: sendPasswordResetLink
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "auth"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendPasswordResetLinkDto"
+      responses:
+        "200":
+          $ref: "#/components/responses/StatusResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        # "429":
+        #   $ref: "#/components/responses/TooManyRequestError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /auth/password/reset:
+    post:
+      summary: "Reset Password"
+      description: "Reset Password"
+      operationId: resetPassword
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "auth"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordDto"
+      responses:
+        "200":
+          $ref: "#/components/responses/StatusResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        # "429":
+        #   $ref: "#/components/responses/TooManyRequestError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /me/profile:
+    patch:
+      summary: "Update Profile"
+      description: "Update Profile"
+      operationId: updateProfile
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "account"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileDto"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        # "429":
+        #   $ref: "#/components/responses/TooManyRequestError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /me/account/verification:
+    post:
+      summary: "Initiate Account Verification"
+      description: "Initiate Account Verification"
+      operationId: initiateAccountVerification
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "account"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InitiateAccountVerificationDto"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountVerificationRequest"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+    get:
+      summary: "Get My Account-Verification Info"
+      description: "Get My Account-Verification Info"
+      operationId: getMyAccountVerificationInfo
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "account"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountVerificationRequest" # MAYBE USE A `StatusDto` HERE WITH DATA
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /users/{userId}/account/verification:
+    parameters:
+      - $ref: "#/components/parameters/userIdParam"
+    put:
+      summary: "Update User Account-Verification Status"
+      description: "Update User Account-Verification Status (ADMIN ACCESS)"
+      operationId: updateAccountVerificationStatus
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "account"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAccountVerificationStatusDto"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerificationRequestsResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /users/verification-requests:
+    parameters:
+      - $ref: "#/components/parameters/pageQuery"
+      - $ref: "#/components/parameters/limitQuery"
+      - $ref: "#/components/parameters/verificationStatusQuery"
+    get:
+      summary: "Get Users Account-Verification Requests"
+      description: "Get Users Account-Verification Requests (ADMIN ACCESS)"
+      operationId: getAccountVerificationRequests
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "account"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountVerificationRequest"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+  
+components:
+  schemas:
+    # REQUEST OBJECT DEFINITIONS
+
+    RegisterUserDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "email"
+        - "password"
+        - "countryCode"
+      properties:
+        email:
+          type: "string"
+          format: "email"
+          description: "User's email"
+        password:
+          type: "string"
+          minLength: 4
+          # SHOULD HAVE `pattern` INSTEAD
+        countryCode:
+          type: "string"
+          minLength: 2
+          maxLength: 2
+          description: "User's country code (alpah2-code)"
+        # isAdmin:
+        #   type: "boolean"
+        #   description: "Indicates if user should be an admin or just a normal user"
+        firstName:
+          type: "string"
+          minLength: 2
+          description: "User's first-name"
+        lastName:
+          type: "string"
+          minLength: 2
+          description: "User's first-name"
+
+    LoginDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "email"
+      properties:
+        email:
+          type: "string"
+          format: "email"
+          description: "User's email"
+        password:
+          type: string
+          minLength: 4
+          # SHOULD HAVE `pattern` INSTEAD
+          description: "User's password (if not provided, then login will use passwordless strategy where a login-link is sent to user's email)"
+
+    VerifyTwoFaDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "code"
+      properties:
+        code:
+          type: "string"
+          minLength: 6
+          maxLength: 6
+          description: "User 2FA code to verify"
+
+    ResetPasswordDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "userId"
+        - "token"
+        - "password"
+      properties:
+        userId:
+          type: "string"
+          format: "uuid"
+          description: "User's identifier"
+        token:
+          type: "string"
+          description: "Password reset-token to reset password"
+        password:
+          type: string
+          minLength: 4
+          # SHOULD HAVE `pattern` INSTEAD
+          description: "User's new password"
+
+    SendPasswordResetLinkDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "email"
+      properties:
+        email:
+          type: "string"
+          format: "email"
+          description: "User's email"
+
+    UpdateProfileDto:
+      type: "object"
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        firstName:
+          type: "string"
+          minLength: 2
+          description: "User's first-name"
+        lastName:
+          type: "string"
+          minLength: 2
+          description: "User's last-name"
+        nationality:
+          type: "string"
+          minLength: 2
+          maxLength: 2
+          description: "User's country code (alpah2-code)"
+        photo:
+          type: "string"
+          format: "binary"
+          description: "User's image"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        dateOfBirth:
+          type: "string"
+          format: "date"
+          description: "User's date of birth"
+          example: "2023-01-31"
+        maritalStatus:
+          $ref: "#/components/schemas/MaritalStatus"
+
+    InitiateAccountVerificationDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "idType"
+        - "idNumber"
+        - "images"
+      properties:
+        idType:
+          $ref: "#/components/schemas/IdentificationType"
+        idNumber:
+          type: "string"
+          minLength: 5
+          description: "Identification number of `idType`"
+        images:
+          type: "array"
+          items:
+            type: "string"
+            format: "binary"
+            description: "Document image"
+
+    UpdateAccountVerificationStatusDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "status"
+      properties:
+        status:
+          $ref: "#/components/schemas/VerificationStatus"
+
+    # RESPONSE OBJECT DEFINITIONS
+
+    LoginResponse:
+      type: "object"
+      required:
+        - "token"
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: "string"
+          minLength: 10
+          description: "User authentication token (JWT). This will be a custom token for accessing AUTH VERIFY-2FA"
+        twoFaSetupCode:
+          type: "string"
+          description: "2FA setup code for setting-up TOTP QR-CODE (only provided when 2FA has not been setup)"
+
+    User:
+      type: "object"
+      required:
+        - "id"
+        - "email"
+        - "isAdmin"
+        - "verified"
+        - "createdAt"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+          description: "User unique identifier"
+        email:
+          type: "string"
+          format: "email"
+          description: "User's email"
+        isAdmin:
+          type: "boolean"
+          description: "Indicates if user is an admin or just a normal user"
+        verified:
+          type: "boolean"
+          default: false
+        firstName:
+          type: "string"
+          minLength: 2
+          description: "User's first-name"
+        lastName:
+          type: "string"
+          minLength: 2
+          description: "User's last-name"
+        photoUrl:
+          type: "string"
+          format: "url"
+          description: "User's photo or picture url"
+        gender:
+          $ref: "#/components/schemas/Gender"
+        dateOfBirth:
+          type: "string"
+          format: "date"
+          description: "User's date of birth"
+          example: "2023-01-31"
+        maritalStatus:
+          $ref: "#/components/schemas/MaritalStatus"
+        createdAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+
+    VerifyTwoFaResponse:
+      type: "object"
+      required:
+        - "user"
+        - "token"
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        token:
+          type: "string"
+          minLength: 10
+          description: "User authentication token (JWT)"
+
+    AccountVerificationRequest:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "idType"
+        - "idNumber"
+        - "images"
+        - "status"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+          description: "User identifier"
+        idType:
+          $ref: "#/components/schemas/IdentificationType"
+        idNumber:
+          type: "string"
+          minLength: 5
+          description: "Identification number of `idType`"
+        images:
+          type: "array"
+          minItems: 1
+          items:
+            type: "string"
+            format: "url"
+            description: "Document image url"
+        status:
+          $ref: "#/components/schemas/VerificationStatus"
+        # reviewedBy:
+        #   type: "string"
+        #   format: "uuid"
+        #   description: "User identifier of admin that reviewed the provided data"
+        createdAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+
+    VerificationRequestsResponse:
+      # TO BE UPDATED TO THE PAGINATED RESPONSE FORMAT
+      type: "object"
+      required:
+        - records
+      properties:
+        records:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/AccountVerificationRequest'
+
+    StatusDto:
+      description: Status data, check additional message field.
+      type: object
+      required:
+        - success
+      properties:
+        success:
+          description: >-
+            Status can be successful or failed, a value of true indicates
+            success.
+          type: boolean
+          example: true
+        message:
+          type: string
+          description: additional message describing status.
+        data:
+          type: object
+          additionalProperties:
+            type: object
+            properties: {}
+          description: Data associated with the status, this will not always be present
+        error:
+          $ref: '#/components/schemas/ErrorMessageDto'
+      x-common-model: StatusDto
+
+    ErrorMessageDto:
+      description: >-
+        Default error object for services. This gives consistent error object
+        that all services may use.
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Error code
+          example: UNKNOWN_ERROR
+        message:
+          type: string
+          description: Descriptive error message
+          example: Request could not be completed due to an error
+        data:
+          type: object
+          description: Additional data for this error message.
+          additionalProperties: true
+          properties: {}
+      x-common-model: ErrorMessageDto
+
+    # ENUM DEFINITIONS
+
+    Gender:
+      type: "string"
+      description: "Gender types"
+      enum: &Gender
+        - MALE
+        - FEMALE
+        - OTHERS
+
+    MaritalStatus:
+      type: "string"
+      description: "Marital statuses"
+      enum: &MaritalStatus
+        - SINGLE
+        - MARRIED
+        - DIVORCED
+        - WIDOWED
+
+    IdentificationType:
+      type: "string"
+      description: "Identification types"
+      enum: &IdentificationType
+        - NIN
+        - PASSPORT
+
+    VerificationStatus:
+      type: "string"
+      description: "Account Verification statuses"
+      enum: &VerificationStatus
+        - PENDING
+        - VERIFIED
+        - UNVERIFIED
+
+  parameters:
+    userIdParam:
+      in: "path"
+      name: "userId"
+      schema:
+        type: "string"
+        format: "uuid"
+      required: true
+      description: "User identifier in path"
+
+    verificationStatusQuery:
+      in: "query"
+      name: "status"
+      schema:
+        $ref: "#/components/schemas/VerificationStatus"
+      required: false
+      description: "Verification status in query"
+
+    dateQuery:
+      in: "query"
+      name: "date"
+      schema:
+        type: "string"
+        format: "date"
+      required: false
+      description: "Date to filter records in query"
+
+    pageQuery:
+      in: "query"
+      name: page
+      schema:
+        type: "integer"
+        format: "int32"
+        minimum: 1
+        description: "Positive integer"
+      required: false
+      description: Page to be gotten based on size parameters
+
+    limitQuery:
+      in: "query"
+      name: limit
+      schema:
+        type: "integer"
+        format: "int32"
+        minimum: 1
+        description: "Positive integer"
+      required: false
+      description: Number of items to be gotten per page
+
+    sortQuery:
+      in: "query"
+      name: sort
+      schema:
+        type: "string"
+        pattern: '^([a-zA-Z]{2,}(:asc|:desc)?)+(?:(,([a-zA-Z]{2,}(:asc|:desc)?))*)$'
+      required: false
+      allowReserved: true
+      description: Sort string used to sort various fields in `asc` or `desc` order. E.g. `name:asc,createdAt:desc`
+
+  responses:
+    StatusResponse:
+      description: Request status
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/StatusDto"
+          example:
+            success: true
+            message: 'Action completed successfully'
+            data:
+              label: name of service
+              expiry: date
+
+    InvalidRequest:
+      description: Request could not be validated
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessageDto"
+          example:
+            code: 'BAD_REQUEST'
+            message: 'Request could not be validated.'
+
+    Unauthenticated:
+      description: Client is not authenticated to make request
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessageDto"
+          example:
+            code: 'UNAUTHENTICATED'
+            message: 'Either client security header is missing or it is not valid.'
+
+    AccessDenied:
+      description: Expected permission is not available.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessageDto"
+          example:
+            code: 'ACCESS_DENIED'
+            message: 'Expected permission or scope is not present.'
+
+    NotFound:
+      description: Entity was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessageDto"
+          example:
+            code: 'NOT_FOUND'
+            message: 'Information could not be found'
+
+    ConflictError:
+      description: Entity already exist while user tries to create it.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessageDto"
+          example:
+            code: 'ACCESS_DENIED'
+            message: 'Entity already exist!'
+
+    UnprocessableError:
+      description: Entity could not be processed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessageDto"
+          example:
+            code: 'UNPROCESSABLE'
+            message: 'Sorry we could not process your request'
+
+    TooManyRequestError:
+      description: Too many requests.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessageDto"
+          example:
+            code: 'TOO_MANY_REQUESTS'
+            message: 'Too many requests. Please try again later!'
+
+    ServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessageDto"
+          example:
+            code: 'INTERNAL_ERROR'
+            message: 'An internal server error occurred.'
+
+  securitySchemes:
+    bearerToken:
+      type: "http"
+      scheme: "bearer"
+      bearerFormat: "JWT"
+      description: "Authentication for user-facing endpoints. Uses bearer token in API prefix."
