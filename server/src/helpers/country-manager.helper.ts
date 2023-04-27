@@ -2,10 +2,21 @@
  * @class CountryManager
  */
 export class CountryManager {
+  /**
+   * @method getNameByCode
+   * @static
+   * @param {string} code
+   * @returns {string|undefined}
+   */
   static getNameByCode(code: string): string | undefined {
     return this.getCountriesMap()[code];
   }
 
+  /**
+   * @method getCountriesMap
+   * @static
+   * @returns {Record<string, string>}
+   */
   private static getCountriesMap(): Record<string, string> {
     return {
       AF: "Afghanistan",
