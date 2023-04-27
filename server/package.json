@@ -26,6 +26,7 @@
     "@types/node": "^18.11.18",
     "@types/redis-mock": "^0.17.1",
     "@types/redis-rate-limiter": "^1.2.3",
+    "@types/speakeasy": "^2.0.7",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "eslint": "^8.29.0",
@@ -58,6 +59,7 @@
     "morgan": "^1.10.0",
     "redis-rate-limiter": "^1.2.0",
     "reflect-metadata": "^0.1.13",
+    "speakeasy": "^2.0.0",
     "typedi": "^0.10.0",
     "winston": "^3.8.2",
     "winston-daily-rotate-file": "^4.7.1"

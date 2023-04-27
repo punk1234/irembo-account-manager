@@ -347,7 +347,7 @@ components:
           type: "string"
           minLength: 2
           maxLength: 2
-          description: "User's country code (alpah2-code)"
+          description: "User's country code (alpha2-code)"
         # isAdmin:
         #   type: "boolean"
         #   description: "Indicates if user should be an admin or just a normal user"
@@ -437,7 +437,7 @@ components:
           type: "string"
           minLength: 2
           maxLength: 2
-          description: "User's country code (alpah2-code)"
+          description: "User's country code (alpha2-code)"
         photo:
           type: "string"
           format: "binary"
@@ -506,6 +506,7 @@ components:
         - "email"
         - "isAdmin"
         - "verified"
+        - "nationality"
         - "createdAt"
       properties:
         id:
@@ -522,6 +523,11 @@ components:
         verified:
           type: "boolean"
           default: false
+        nationality:
+          type: "string"
+          minLength: 2
+          maxLength: 2
+          description: "User's country code (alpha2-code)"
         firstName:
           type: "string"
           minLength: 2

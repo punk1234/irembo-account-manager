@@ -2,20 +2,26 @@ import "reflect-metadata";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import express, { Application } from "express";
 
 import C from "./constants";
 import config from "./config";
-import RouteManager from "./routes";
 import { errorHandler } from "./middlewares";
 import { BadRequestError } from "./exceptions";
 import { Logger, LoggerStream } from "./helpers";
+import { MongooseUuid } from "./database/mongoose-uuid.type";
 import { IAppOptions, IDatabaseConnector } from "./interfaces";
 import RedisConnector from "./database/connectors/redis.connector";
 import MongoDbConnector from "./database/connectors/mongodb.connector";
+
+// Add MongooseUuid to SchemaTypes before loading the routes,
+// loading the routes will instantiate models, so UUID types must be added before models are instantiated
+(Schema.Types as any).UUID = MongooseUuid;
+
+import RouteManager from "./routes";
 
 /**
  * @class App

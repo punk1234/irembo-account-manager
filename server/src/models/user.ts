@@ -44,6 +44,12 @@ export interface User {
      */
     verified: boolean;
     /**
+     * User's country code (alpah2-code)
+     * @type {string}
+     * @memberof User
+     */
+     nationality: string;
+    /**
      * User's first-name
      * @type {string}
      * @memberof User
