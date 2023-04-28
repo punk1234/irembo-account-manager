@@ -15,4 +15,9 @@ export default {
 
   TOTP_ISSUER_NAME: "Irembo Auth",
   TWO_FA_CRYPTO_SECRET: env.TWO_FA_CRYPTO_SECRET || "", // HANDLE MISSING env HAS THIS IS CRITICAL
+
+  WEB_APP_URL: env.WEB_APP_URL || "https://web.irembo.app",
+
+  EMAIL_NAME: env.EMAIL_NAME || "",
+  EMAIL_PASSWORD: env.EMAIL_PASSWORD || "",
 };

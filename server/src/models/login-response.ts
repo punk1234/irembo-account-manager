@@ -29,7 +29,7 @@ export interface LoginResponse {
      * @type {string}
      * @memberof LoginResponse
      */
-    token: string;
+    token?: string;
     /**
      * 2FA setup code for setting-up TOTP QR-CODE (only provided when 2FA has not been setup)
      * @type {string}
