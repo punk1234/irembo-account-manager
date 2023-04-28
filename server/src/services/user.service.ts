@@ -4,7 +4,7 @@ import { PasswordHasher } from "../helpers";
 import { RegisterUserDto } from "../models";
 import { IUser } from "../database/types/user.type";
 import UserModel from "../database/models/user.model";
-import { ConflictError, UnauthenticatedError } from "../exceptions";
+import { ConflictError, NotFoundError, UnauthenticatedError } from "../exceptions";
 import { ClientSession } from "mongoose";
 
 @Service()
@@ -22,6 +22,21 @@ export class UserService {
     const USER = new UserModel({ ...data, password: PASSWORD_HASH, nationality: data.countryCode });
 
     return USER.save({ session: dbSession });
+  }
+
+  /**
+   * @method checkThatUserExist
+   * @async
+   * @param {string} userId
+   * @returns {Promise<IUser>}
+   */
+  async checkThatUserExist(userId: string): Promise<IUser> {
+    const foundUser = await UserModel.findOne({ _id: userId });
+    if (foundUser) {
+      return foundUser;
+    }
+
+    throw new NotFoundError("User not found!");
   }
 
   /**

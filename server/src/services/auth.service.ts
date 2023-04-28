@@ -9,7 +9,13 @@ import { TwoFaService } from "./two-fa.service";
 import { IUser } from "../database/types/user.type";
 import { IAuthTokenPayload } from "../interfaces";
 import { EmailService } from "./external/email.service";
-import { LoginDto, LoginResponse, RegisterUserDto } from "../models";
+import {
+  LoginDto,
+  LoginResponse,
+  RegisterUserDto,
+  VerifyTwoFaDto,
+  VerifyTwoFaResponse,
+} from "../models";
 import { AuthTokenType } from "../constants/auth-token-type.const";
 import { BadRequestError, UnauthenticatedError } from "../exceptions";
 import { CountryManager, DbTransactionHelper, JwtHelper, TotpAuthenticator } from "../helpers";
@@ -41,7 +47,7 @@ export class AuthService {
 
     await DbTransactionHelper.execute(async (dbSession?: ClientSession) => {
       const USER = await this.userService.createUser(data, dbSession);
-      await this.twoFaService.create(USER._id, dbSession);
+      await this.twoFaService.create(USER._id.toUUIDString(), dbSession);
     });
   }
 
@@ -66,13 +72,34 @@ export class AuthService {
     return response;
   }
 
+  /**
+   * @method verifyTwoFa
+   * @async
+   * @param {string} userId
+   * @param {VerifyTwoFaDto} data
+   * @returns {Promise<VerifyTwoFaResponse>}
+   */
+  async verifyTwoFa(userId: string, data: VerifyTwoFaDto): Promise<VerifyTwoFaResponse> {
+    await this.twoFaService.verify(userId, data.code);
+
+    const USER = await this.userService.checkThatUserExist(userId);
+    const AUTH_TOKEN_PAYLOAD = this.generateUserAuthTokenPayload(USER);
+
+    const AUTH_TOKEN = JwtHelper.generateToken(
+      AUTH_TOKEN_PAYLOAD,
+      config.AUTH_2FA_TOKEN_TTL_IN_MILLISECS,
+    );
+
+    return { user: USER.toJSON(), token: AUTH_TOKEN };
+  }
+
   private async handleTwoFaLogin(user: IUser, data: Required<LoginDto>): Promise<LoginResponse> {
     // TODO: ADD DESCRIPTION
     this.userService.checkThatPasswordsMatch(data.password, user.password as string);
     const AUTH_TOKEN_PAYLOAD = this.generateUserAuthTokenPayload(user, C.AuthTokenType.VERIFY_2FA);
 
     const AUTH_TOKEN = JwtHelper.generateToken(AUTH_TOKEN_PAYLOAD, config.AUTH_TOKEN_TTL_IN_HOURS);
-    const TWO_FA_SECRET = await this.twoFaService.getTwoFaSecretIfNotSetup(user._id);
+    const TWO_FA_SECRET = await this.twoFaService.getTwoFaSecretIfNotSetup(user._id.toUUIDString());
 
     const twoFaSetupCode =
       TWO_FA_SECRET &&
@@ -127,7 +154,7 @@ export class AuthService {
    */
   private generateUserAuthTokenPayload(user: IUser, tokenType?: AuthTokenType): IAuthTokenPayload {
     return {
-      userId: user._id,
+      userId: user._id.toUUIDString(),
       isAdmin: user.isAdmin,
       type: tokenType,
     };
