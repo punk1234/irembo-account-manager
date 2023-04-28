@@ -55,7 +55,7 @@ export class AuthService {
     data.email = data.email.toLowerCase();
 
     const USER = await this.checkThatUserExistByEmailForLogin(data.email);
-    let response: LoginResponse = {};
+    let response: LoginResponse = { isPasswordless: true };
 
     if (data.password) {
       response = await this.handleTwoFaLogin(USER, data as Required<LoginDto>);

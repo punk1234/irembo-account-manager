@@ -18,6 +18,7 @@ import { User } from './user';
  * @interface LoginResponse
  */
 export interface LoginResponse {
+    isPasswordless?: boolean;
     /**
      * 
      * @type {User}
