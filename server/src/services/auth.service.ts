@@ -2,17 +2,17 @@ import crypto from "crypto";
 import QrCode from "qrcode";
 import { Inject, Service } from "typedi";
 import { ClientSession } from "mongoose";
-import { UserService } from "./user.service";
 import C from "../constants";
 import config from "../config";
+import { UserService } from "./user.service";
 import { TwoFaService } from "./two-fa.service";
 import { IUser } from "../database/types/user.type";
 import { IAuthTokenPayload } from "../interfaces";
-import { BadRequestError, UnauthenticatedError } from "../exceptions";
-import { CountryManager, DbTransactionHelper, JwtHelper, TotpAuthenticator } from "../helpers";
+import { EmailService } from "./external/email.service";
 import { LoginDto, LoginResponse, RegisterUserDto } from "../models";
 import { AuthTokenType } from "../constants/auth-token-type.const";
-import { EmailService } from "./external/email.service";
+import { BadRequestError, UnauthenticatedError } from "../exceptions";
+import { CountryManager, DbTransactionHelper, JwtHelper, TotpAuthenticator } from "../helpers";
 
 @Service()
 export class AuthService {
