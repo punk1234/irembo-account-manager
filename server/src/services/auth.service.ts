@@ -19,6 +19,7 @@ import {
 import { AuthTokenType } from "../constants/auth-token-type.const";
 import { BadRequestError, UnauthenticatedError } from "../exceptions";
 import { CountryManager, DbTransactionHelper, JwtHelper, TotpAuthenticator } from "../helpers";
+import { PasswordResetService } from "./password-reset.service";
 
 @Service()
 export class AuthService {
@@ -27,6 +28,7 @@ export class AuthService {
     @Inject() private readonly userService: UserService,
     @Inject() private readonly twoFaService: TwoFaService,
     @Inject() private readonly emailService: EmailService,
+    @Inject() private readonly passwordResetService: PasswordResetService,
   ) {}
 
   /**
@@ -70,6 +72,41 @@ export class AuthService {
     }
 
     return response;
+  }
+
+  /**
+   * @method sendPasswordResetLink
+   * @async
+   * @param {string} email
+   * @returns {Promise<void>}
+   */
+  async sendPasswordResetLink(email: string): Promise<void> {
+    email = email.toLowerCase();
+
+    const USER = await this.userService.getUserByEmail(email);
+    if (!USER) {
+      return;
+    }
+
+    const RESET_TOKEN = crypto.randomBytes(30).toString("base64");
+
+    /** TOTAL OF (36+1+40+1=78%3=0), SO THERE'S NO PADDING OF `=` or `==` AT THE END */
+    const ENCODED_RESET_TOKEN =
+      crypto.randomBytes(6).toString("base64") + // RANDOM UNUSED TOKEN (8 chars)
+      Buffer.from(`${USER._id.toUUIDString()}@${RESET_TOKEN}$`).toString("base64");
+
+    // console.debug("RESET_TOKEN", RESET_TOKEN.length, RESET_TOKEN);
+    // console.debug("ENCODED_RESET_TOKEN", ENCODED_RESET_TOKEN);
+
+    await this.passwordResetService.saveToken(USER._id.toUUIDString(), RESET_TOKEN);
+    const RESET_LINK = `${config.WEB_APP_URL}?token=${encodeURIComponent(ENCODED_RESET_TOKEN)}`;
+
+    // TODO: HANDLE EMAIL ERROR
+    this.emailService.sendPasswordResetLink(
+      USER.email,
+      RESET_LINK,
+      USER.firstName || USER.lastName,
+    );
   }
 
   /**

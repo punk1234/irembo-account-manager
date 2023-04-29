@@ -16,4 +16,6 @@ router.post(
   controller.verifyTwoFa,
 );
 
+router.post("/password/reset/send-link", controller.sendPasswordResetLink);
+
 export default router;

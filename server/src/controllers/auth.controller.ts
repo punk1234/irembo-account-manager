@@ -2,7 +2,7 @@ import { Inject, Service } from "typedi";
 import { Controller } from "../decorators";
 import { Request, Response } from "express";
 import { ResponseHandler } from "../helpers";
-import { LoginDto, RegisterUserDto, VerifyTwoFaDto } from "../models";
+import { LoginDto, RegisterUserDto, SendPasswordResetLinkDto, VerifyTwoFaDto } from "../models";
 import { AuthService } from "../services/auth.service";
 
 @Service()
@@ -48,5 +48,17 @@ export class AuthController {
     );
 
     ResponseHandler.ok(res, loginResponse);
+  }
+
+  /**
+   * @method sendPasswordResetLink
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async sendPasswordResetLink(req: Request, res: Response) {
+    await this.authService.sendPasswordResetLink((req.body as SendPasswordResetLinkDto).email);
+
+    ResponseHandler.ok(res, {});
   }
 }
