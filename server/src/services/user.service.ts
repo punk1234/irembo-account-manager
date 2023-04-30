@@ -1,9 +1,10 @@
 import { Service } from "typedi";
+import C from "../constants";
 import { PasswordHasher } from "../helpers";
 import { RegisterUserDto } from "../models";
 import { IUser } from "../database/types/user.type";
 import UserModel from "../database/models/user.model";
-import { ConflictError } from "../exceptions";
+import { ConflictError, UnauthenticatedError } from "../exceptions";
 import { ClientSession } from "mongoose";
 
 @Service()
@@ -24,6 +25,16 @@ export class UserService {
   }
 
   /**
+   * @method getUserByEmail
+   * @async
+   * @param {string} email
+   * @returns {Promise<IUser|null>}
+   */
+  async getUserByEmail(email: string): Promise<IUser | null> {
+    return UserModel.findOne({ email });
+  }
+
+  /**
    * @method checkThatUserWithEmailDoesNotExist
    * @async
    * @param {string} email
@@ -33,6 +44,20 @@ export class UserService {
 
     if (foundUser) {
       throw new ConflictError("User already exist!");
+    }
+  }
+
+  /**
+   * @method checkThatPasswordsMatch
+   * @instance
+   * @param {string} plainTextPassword
+   * @param {string} passwordHash
+   */
+  checkThatPasswordsMatch(plainTextPassword: string, passwordHash: string): void {
+    const VALID_PASSWORD = PasswordHasher.verify(plainTextPassword, passwordHash);
+
+    if (!VALID_PASSWORD) {
+      throw new UnauthenticatedError(C.ResponseMessage.ERR_INVALID_CREDENTIALS);
     }
   }
 }

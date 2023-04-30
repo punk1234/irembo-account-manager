@@ -486,9 +486,10 @@ components:
 
     LoginResponse:
       type: "object"
-      required:
-        - "token"
       properties:
+        isPasswordless:
+          type: "boolean"
+          description: "Indicates if login strategy is passwordless or with password"
         user:
           $ref: '#/components/schemas/User'
         token:

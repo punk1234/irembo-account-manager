@@ -5,3 +5,5 @@ export { CountryManager } from "./country-manager.helper";
 export { ResponseHandler } from "./response-handler.helper";
 export { DbTransactionHelper } from "./db-transaction.helper";
 export { verifyAuthToken } from "./auth-token-verifier.helper";
+export { TotpAuthenticator } from "./totp-authenticator.helper";
+export { CryptoHandler } from "./crypto-handler.helper";

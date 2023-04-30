@@ -53,6 +53,7 @@ const UserSchema = new Schema(
 
       transform: function (doc: any, ret: any) {
         delete ret._id;
+        delete ret.password;
         ret.id = doc._id.toUUID();
       },
     },

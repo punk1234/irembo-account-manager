@@ -9,13 +9,13 @@ import { TotpAuthenticator } from "../helpers/totp-authenticator.helper";
 @Service()
 export class TwoFaService {
   /**
-   * @name create
-   * @async
+   * @method create
+   * @instance
    * @param {string} userId
    * @param {ClientSession} dbSession
    * @returns {Promise<IUserTwoFa>}
    */
-  async create(userId: string, dbSession?: ClientSession): Promise<IUserTwoFa> {
+  create(userId: string, dbSession?: ClientSession): Promise<IUserTwoFa> {
     const plainSecret: string = TotpAuthenticator.getSecret();
     const encryptData: ICryptoData = CryptoHandler.encrypt(plainSecret);
 
@@ -24,6 +24,36 @@ export class TwoFaService {
       secret: encryptData.content,
       iv: encryptData.iv,
     });
+
     return twoFa.save({ session: dbSession });
+  }
+
+  //   /**
+  //    * @name hasTwoFaBeenSetup
+  //    * @async
+  //    * @param {string} userId
+  //    * @returns {Promise<boolean>}
+  //    */
+  //   async hasTwoFaBeenSetup(userId: string): Promise<boolean> {
+  //     const twoFa = await UserTwoFaModel.findOne({ _id: userId });
+
+  //     return !!twoFa?.verifiedAt;
+  //   }
+
+  /**
+   * @name getTwoFaSecretIfNotSetup
+   * @async
+   * @param {string} userId
+   * @returns {Promise<string|undefined>}
+   */
+  async getTwoFaSecretIfNotSetup(userId: string): Promise<string | undefined> {
+    const twoFa = await UserTwoFaModel.findOne({ _id: userId });
+
+    if (twoFa && !twoFa.verifiedAt) {
+      return CryptoHandler.decrypt({
+        content: twoFa.secret,
+        iv: twoFa.iv,
+      });
+    }
   }
 }
