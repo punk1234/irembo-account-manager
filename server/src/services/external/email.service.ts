@@ -28,8 +28,6 @@ export class EmailService {
       pass: SENDER_PASSWORD,
     };
 
-    console.log(AUTH);
-
     this.transporter = Mailer.createTransport({ service: "gmail", auth: AUTH });
     this.SENDER_EMAIL = SENDER_EMAIL;
   }

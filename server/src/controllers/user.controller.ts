@@ -3,6 +3,7 @@ import { Controller } from "../decorators";
 import { Request, Response } from "express";
 import { ResponseHandler } from "../helpers";
 import { UserService } from "../services/user.service";
+import { InitiateAccountVerificationDto } from "../models";
 
 @Service()
 @Controller()

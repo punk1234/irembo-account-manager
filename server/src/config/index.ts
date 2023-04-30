@@ -24,4 +24,10 @@ export default {
 
   EMAIL_NAME: env.EMAIL_NAME || "",
   EMAIL_PASSWORD: env.EMAIL_PASSWORD || "",
+
+  CLOUDINARY: {
+    cloud_name: env.CLOUDINARY_CLOUD_NAME,
+    api_key: env.CLOUDINARY_API_KEY,
+    api_secret: env.CLOUDINARY_API_SECRET,
+  },
 };
