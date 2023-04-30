@@ -2,14 +2,14 @@ import { Inject, Service } from "typedi";
 import { Controller } from "../decorators";
 import { Request, Response } from "express";
 import { ResponseHandler } from "../helpers";
-import { LoginDto, RegisterUserDto } from "../models";
+import { LoginDto, RegisterUserDto, VerifyTwoFaDto } from "../models";
 import { AuthService } from "../services/auth.service";
 
 @Service()
 @Controller()
 export class AuthController {
   // eslint-disable-next-line no-useless-constructor
-  constructor(@Inject() private authService: AuthService) {}
+  constructor(@Inject() private readonly authService: AuthService) {}
 
   /**
    * @method register
@@ -31,6 +31,21 @@ export class AuthController {
    */
   async login(req: Request, res: Response) {
     const loginResponse = await this.authService.login(req.body as LoginDto);
+
+    ResponseHandler.ok(res, loginResponse);
+  }
+
+  /**
+   * @method verifyTwoFa
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async verifyTwoFa(req: Request, res: Response) {
+    const loginResponse = await this.authService.verifyTwoFa(
+      req.auth?.userId as string,
+      req.body as VerifyTwoFaDto,
+    );
 
     ResponseHandler.ok(res, loginResponse);
   }

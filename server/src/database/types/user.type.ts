@@ -1,8 +1,9 @@
 import { Document } from "mongoose";
 import { User } from "../../models";
+import { UUID } from "../mongoose-uuid.type";
 
 interface UserDoc extends Document {
-  _id: string;
+  _id: UUID;
   password?: string;
 }
 

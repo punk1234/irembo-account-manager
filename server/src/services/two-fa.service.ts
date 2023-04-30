@@ -5,6 +5,7 @@ import UserTwoFaModel from "../database/models/user-two-fa.model";
 import { IUserTwoFa } from "../database/types/user-two-fa.type";
 import { CryptoHandler } from "../helpers/crypto-handler.helper";
 import { TotpAuthenticator } from "../helpers/totp-authenticator.helper";
+import { NotFoundError, UnauthenticatedError } from "../exceptions";
 
 @Service()
 export class TwoFaService {
@@ -19,6 +20,7 @@ export class TwoFaService {
     const plainSecret: string = TotpAuthenticator.getSecret();
     const encryptData: ICryptoData = CryptoHandler.encrypt(plainSecret);
 
+    // console.debug(plainSecret);
     const twoFa = new UserTwoFaModel({
       _id: userId,
       secret: encryptData.content,
@@ -26,6 +28,54 @@ export class TwoFaService {
     });
 
     return twoFa.save({ session: dbSession });
+  }
+
+  async verify(userId: string, twoFaCode: string): Promise<IUserTwoFa> {
+    const twoFaSecret: IUserTwoFa = await this.checkThatUserTwoFaSecretExist(userId);
+    const decryptedSecret: string = CryptoHandler.decrypt({
+      content: twoFaSecret.secret,
+      iv: twoFaSecret.iv,
+    });
+
+    const isTotpValid = TotpAuthenticator.verify(decryptedSecret, twoFaCode);
+    if (!isTotpValid) {
+      throw new UnauthenticatedError("2FA code is invalid");
+    }
+
+    await this.markTwoFaAsVerifiedIfNotMarked(twoFaSecret);
+
+    return twoFaSecret;
+  }
+
+  /**
+   * @name checkThatUserTwoFaSecretExist
+   * @static
+   * @async
+   * @param {string} userId
+   * @returns {Promise<IUserTwoFa>}
+   */
+  private async checkThatUserTwoFaSecretExist(userId: string): Promise<IUserTwoFa> {
+    const foundUserTwoFa = await UserTwoFaModel.findOne({ userId });
+    if (!foundUserTwoFa) {
+      throw new NotFoundError("User 2FA secret does not exist");
+    }
+
+    return foundUserTwoFa;
+  }
+
+  /**
+   * @method markTwoFaAsVerifiedIfNotMarked
+   * @async
+   * @param {IUserTwoFa} userTwoFa
+   * @returns {Promise<void>}
+   */
+  private async markTwoFaAsVerifiedIfNotMarked(userTwoFa: IUserTwoFa): Promise<void> {
+    if (userTwoFa.verifiedAt) {
+      return;
+    }
+
+    userTwoFa.verifiedAt = new Date();
+    await userTwoFa.save();
   }
 
   //   /**
