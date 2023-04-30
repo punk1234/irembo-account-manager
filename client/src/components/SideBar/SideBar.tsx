@@ -1,6 +1,7 @@
 import { Icon, MaybeElement } from "@blueprintjs/core";
 import { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated-icons/16px/blueprint-icons-16";
 import { useState } from "react";
+import config from "../../config";
 import {
   SideBarWrapper,
   SideBarContainer,
@@ -10,7 +11,7 @@ import {
   Nav,
   NavItems,
   NavItem,
-  SideBarNavLink,
+  SideBarNavLink
 } from "./SideBar.styles";
 
 interface INavItemComponent {
@@ -55,11 +56,8 @@ export const SideBar = () => {
         </SideBarControl>
         <Organization data-mobile={sideBarDesktop}>
           <OrganizationName>
-            {sideBarDesktop ? "FuncFlow" : "FuncFlow".slice(0, 2)}
+            {sideBarDesktop ? config.APP_NAME : config.APP_NAME.slice(0, 2)}
           </OrganizationName>
-          {sideBarDesktop && (
-            <Icon color="var(--black)" icon="chevron-down" size={16} />
-          )}
         </Organization>
         <Nav>
           <NavItems>
@@ -71,13 +69,20 @@ export const SideBar = () => {
             />
             <NavItemComponent
               isSideBarDesktop={sideBarDesktop}
+              icon="grid-view"
+              text="Users"
+              to="users"
+            />
+            <NavItemComponent
+              isSideBarDesktop={sideBarDesktop}
               icon="changes"
-              text="Functional Requirements"
-              to="functional-requirements"
+              text="Verification Requests"
+              to="verification-requests"
             />
           </NavItems>
         </Nav>
       </SideBarContainer>
+      <Icon size={18} icon="power" />    
     </SideBarWrapper>
   );
 };

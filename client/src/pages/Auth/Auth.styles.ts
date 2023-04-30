@@ -57,3 +57,9 @@ export const FormBottom = styled(Link)`
   color: var(--faint-black);
   font-size: 1rem;
 `;
+
+export const QRCodeWrapper =  styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+`

@@ -13,9 +13,7 @@ export const Header = () => {
     <HeaderWrapper>
       <Logo />
       <NavItems>
-        <ProjectDropDown>Projects</ProjectDropDown>
         <UserProfile>AF</UserProfile>
-        <Button type="button" text="Upgrade Plan" margin="0" />
       </NavItems>
     </HeaderWrapper>
   );

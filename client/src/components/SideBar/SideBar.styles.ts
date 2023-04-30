@@ -2,6 +2,10 @@ import { NavLink } from "react-router-dom";
 import styled from "styled-components";
 
 export const SideBarWrapper = styled.aside`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
   position: sticky;
   top: 0;
   left: 0;
@@ -17,7 +21,14 @@ export const SideBarWrapper = styled.aside`
   &[data-desktop="false"] {
     width: 70px;
   }
+
+  span{
+    display: inline-flex;
+    align-self: center;
+    cursor: pointer;
+  }
 `;
+
 
 export const SideBarContainer = styled.div`
   height: 100%;
@@ -45,35 +56,13 @@ export const SideBarControl = styled.div`
 `;
 
 export const Organization = styled.section`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  position: relative;
   padding: 1rem;
-
-  span {
-    display: inline-flex;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 6px;
-
-    :hover {
-      background-color: var(--secondary-bg);
-      box-shadow: 0px 12px 28px rgba(33, 39, 73, 0.2);
-
-      svg {
-        fill: var(--white);
-      }
-    }
-  }
+  text-align: center;
 
   &[data-mobile="false"] {
     background-color: var(--secondary-bg);
     box-shadow: 0px 12px 28px rgba(33, 39, 73, 0.2);
     color: var(--white);
-    border-radius: 6px;
-    text-align: center;
     text-transform: uppercase;
     cursor: pointer;
     width: 40px;
@@ -85,10 +74,12 @@ export const Organization = styled.section`
 
 export const OrganizationName = styled.p`
   flex: 1;
-  font-size: 1rem;
+  font-size: 1.25rem;
+  font-weight: 700;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  cursor: pointer;
 `;
 
 export const Nav = styled.nav`
