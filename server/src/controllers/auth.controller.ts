@@ -59,6 +59,6 @@ export class AuthController {
   async sendPasswordResetLink(req: Request, res: Response) {
     await this.authService.sendPasswordResetLink((req.body as SendPasswordResetLinkDto).email);
 
-    ResponseHandler.ok(res, {});
+    ResponseHandler.ok(res, { message: "Check your mail for reset-link!" });
   }
 }
