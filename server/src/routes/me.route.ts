@@ -17,4 +17,10 @@ router.post(
   verificationController.initiateAccountVerification,
 );
 
+router.get(
+  "/account/verification",
+  requireAuth({ forAdmin: false }),
+  verificationController.getVerificationInfo,
+);
+
 export default router;

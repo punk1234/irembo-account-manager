@@ -5,6 +5,7 @@ import { FileManager } from "./external/file-manager.service";
 import { IFileUploadData } from "../interfaces";
 import { UserService } from "./user.service";
 import config from "../config";
+import { IAccountVerification } from "../database/types/account-verification.type";
 
 @Service()
 export class AccountVerificationService {
@@ -43,5 +44,15 @@ export class AccountVerificationService {
 
     // UPDATE USER VERIFIED STATUS & UPDATE ACCOUNT-VERIFICATION DETAILS
     await this.userService.resetVerifiedValue(userId);
+  }
+
+  /**
+   * @method getVerificationInfo
+   * @async
+   * @param {string} userId
+   * @returns {Promise<IAccountVerification|null>}
+   */
+  async getVerificationInfo(userId: string): Promise<IAccountVerification | null> {
+    return AccountVerificationModel.findOne({ _id: userId });
   }
 }
