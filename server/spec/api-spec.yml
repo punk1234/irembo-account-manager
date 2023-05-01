@@ -402,8 +402,6 @@ paths:
           $ref: "#/components/responses/Unauthenticated"
         "403":
           $ref: "#/components/responses/AccessDenied"
-        "409":
-          $ref: "#/components/responses/ConflictError"
         "default":
           $ref: "#/components/responses/ServerError"
   
