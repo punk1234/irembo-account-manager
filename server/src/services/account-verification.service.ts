@@ -6,6 +6,7 @@ import { IFileUploadData } from "../interfaces";
 import { UserService } from "./user.service";
 import config from "../config";
 import { IAccountVerification } from "../database/types/account-verification.type";
+import { BadRequestError, ConflictError, NotFoundError } from "../exceptions";
 
 @Service()
 export class AccountVerificationService {
@@ -27,9 +28,6 @@ export class AccountVerificationService {
     data: InitiateAccountVerificationDto,
     uploadData: Array<IFileUploadData>,
   ): Promise<void> {
-    // const foundVerification = await AccountVerificationModel.findOne({ _id: userId });
-
-    // UPLOAD FILES TO CLOUDINARY
     const uploadUrls = await this.fileManager.uploadFiles(
       uploadData,
       config.VERIFICATION_DOCS_BUCKET,
@@ -42,8 +40,7 @@ export class AccountVerificationService {
       { upsert: true },
     );
 
-    // UPDATE USER VERIFIED STATUS & UPDATE ACCOUNT-VERIFICATION DETAILS
-    await this.userService.resetVerifiedValue(userId);
+    await this.userService.setVerifiedValue(userId);
   }
 
   /**
@@ -54,5 +51,48 @@ export class AccountVerificationService {
    */
   async getVerificationInfo(userId: string): Promise<IAccountVerification | null> {
     return AccountVerificationModel.findOne({ _id: userId });
+  }
+
+  /**
+   * @method updateAccountVerificationStatus
+   * @async
+   * @param {string} userId
+   * @param {VerificationStatus} status
+   * @returns {Promise<IAccountVerification>}
+   */
+  async updateAccountVerificationStatus(
+    userId: string,
+    status: VerificationStatus,
+  ): Promise<IAccountVerification> {
+    if (status === VerificationStatus.PENDING) {
+      throw new BadRequestError("`PENDING` status is not allowed!");
+    }
+
+    const VERIFICATION = await this.checkThatUserVerificationExist(userId);
+
+    if (status === VERIFICATION.status) {
+      throw new ConflictError(`Verification status is already ${status}`);
+    }
+
+    VERIFICATION.status = status;
+    await VERIFICATION.save();
+
+    await this.userService.setVerifiedValue(userId, status === VerificationStatus.VERIFIED);
+    return VERIFICATION;
+  }
+
+  /**
+   * @method checkThatUserVerificationExist
+   * @async
+   * @param {string} userId
+   * @returns {Promise<IAccountVerification>}
+   */
+  private async checkThatUserVerificationExist(userId: string): Promise<IAccountVerification> {
+    const foundVerification = await AccountVerificationModel.findOne({ _id: userId });
+    if (foundVerification) {
+      return foundVerification;
+    }
+
+    throw new NotFoundError("User account-verificatiuon not found!");
   }
 }

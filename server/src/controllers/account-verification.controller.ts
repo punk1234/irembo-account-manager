@@ -2,7 +2,7 @@ import { Inject, Service } from "typedi";
 import { Controller } from "../decorators";
 import { Request, Response } from "express";
 import { FileHelper, ResponseHandler } from "../helpers";
-import { InitiateAccountVerificationDto } from "../models";
+import { InitiateAccountVerificationDto, UpdateAccountVerificationStatusDto } from "../models";
 import { AccountVerificationService } from "../services/account-verification.service";
 import { IdentityDocVerifier } from "../services/external/identity-doc-verifier.service";
 import { IAccountVerification } from "../database/types/account-verification.type";
@@ -48,5 +48,20 @@ export class AccountVerificationController {
       await this.accountVerificationService.getVerificationInfo(req.auth?.userId as string);
 
     ResponseHandler.ok(res, { success: !!verificationInfo, data: verificationInfo });
+  }
+
+  /**
+   * @method updateAccountVerificationStatus
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async updateAccountVerificationStatus(req: Request, res: Response) {
+    const verificationInfo = await this.accountVerificationService.updateAccountVerificationStatus(
+      req.params.userId,
+      (req.body as UpdateAccountVerificationStatusDto).status,
+    );
+
+    ResponseHandler.ok(res, { success: verificationInfo });
   }
 }
