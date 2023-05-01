@@ -24,8 +24,14 @@ export class UserService {
     return USER.save({ session: dbSession });
   }
 
-  async resetVerifiedValue(userId: string): Promise<void> {
-    const result = await UserModel.updateOne({ _id: userId }, { verified: false });
+  /**
+   * @method setVerifiedValue
+   * @async
+   * @param {string} userId
+   * @param {boolean} verified
+   */
+  async setVerifiedValue(userId: string, verified: boolean = false): Promise<void> {
+    const result = await UserModel.updateOne({ _id: userId }, { verified });
 
     if (!result.matchedCount) {
       throw new NotFoundError("User not found!");

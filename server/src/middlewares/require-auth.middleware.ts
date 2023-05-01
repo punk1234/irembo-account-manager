@@ -23,8 +23,6 @@ export const requireAuth = (opts?: IVerifyAuthOptions) => {
       //   throw new UnauthenticatedError(C.ResponseMessage.ERR_UNAUTHENTICATED);
       // }
 
-      console.log(authTokenPayload);
-      console.log(opts?.tokenType);
       if (opts?.tokenType !== authTokenPayload.type) {
         next(new UnauthorizedError(C.ResponseMessage.ERR_UNAUTHORIZED));
       }

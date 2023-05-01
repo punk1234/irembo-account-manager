@@ -283,7 +283,7 @@ paths:
         "default":
           $ref: "#/components/responses/ServerError"
 
-  /users/{userId}/account/verification:
+  /users/{userId}/account/verification/status:
     parameters:
       - $ref: "#/components/parameters/userIdParam"
     put:
@@ -305,7 +305,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VerificationRequestsResponse"
+                $ref: "#/components/schemas/AccountVerificationRequest"
         "400":
           $ref: "#/components/responses/InvalidRequest"
         "401":
