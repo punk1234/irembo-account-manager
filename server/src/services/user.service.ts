@@ -77,7 +77,7 @@ export class UserService {
    * @method changePassword
    * @async
    * @param {string} userId
-   * @param {RegisterUserDto} data
+   * @param {ChangePasswordDto} data
    * @returns {Promise<IUser>}
    */
   async changePassword(userId: string, data: ChangePasswordDto): Promise<IUser> {
