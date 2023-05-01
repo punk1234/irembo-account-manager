@@ -64,4 +64,17 @@ export class AccountVerificationController {
 
     ResponseHandler.ok(res, { success: verificationInfo });
   }
+
+  /**
+   * @method getAccountVerificationRequests
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async getAccountVerificationRequests(req: Request, res: Response) {
+    const verificationRequests =
+      await this.accountVerificationService.getAccountVerificationRequests(req.query);
+
+    ResponseHandler.ok(res, verificationRequests);
+  }
 }

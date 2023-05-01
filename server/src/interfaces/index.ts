@@ -1,3 +1,9 @@
+export {
+  IPaginatedData,
+  IPaginatedModel,
+  IPaginationOption,
+  IPaginationQueryHelper,
+} from "./pagination.interface";
 export { ICryptoData } from "./crypto-data.interface";
 export { IAppOptions } from "./app-options.interface";
 export { IFileUploadData } from "./file-upload-data.interface";

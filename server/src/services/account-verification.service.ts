@@ -2,11 +2,12 @@ import { Inject, Service } from "typedi";
 import { InitiateAccountVerificationDto, VerificationStatus } from "../models";
 import AccountVerificationModel from "../database/models/account-verification.model";
 import { FileManager } from "./external/file-manager.service";
-import { IFileUploadData } from "../interfaces";
+import { IFileUploadData, IPaginatedData } from "../interfaces";
 import { UserService } from "./user.service";
 import config from "../config";
 import { IAccountVerification } from "../database/types/account-verification.type";
 import { BadRequestError, ConflictError, NotFoundError } from "../exceptions";
+import { getPaginationSummary } from "../helpers";
 
 @Service()
 export class AccountVerificationService {
@@ -79,6 +80,48 @@ export class AccountVerificationService {
 
     await this.userService.setVerifiedValue(userId, status === VerificationStatus.VERIFIED);
     return VERIFICATION;
+  }
+
+  /**
+   * @method getAccountVerificationRequests
+   * @async
+   * @param {Record<string, any>} filter
+   * @returns {Promise<IPaginatedData<any>>}
+   */
+  async getAccountVerificationRequests(filter: Record<string, any>): Promise<IPaginatedData<any>> {
+    const { status = VerificationStatus.PENDING, page = 1, limit = 10 } = filter;
+
+    const { data, filterCount } = (
+      await AccountVerificationModel.aggregate([
+        { $match: { status } },
+        { $sort: { createdAt: 1 } },
+        { $lookup: { from: "users", foreignField: "_id", localField: "_id", as: "user" } },
+
+        {
+          $project: {
+            _id: 0,
+            id: "$_id",
+            idType: 1,
+            idNumber: 1,
+            status: 1,
+            createdAt: 1,
+            email: { $first: "$user.email" },
+            firstName: { $first: "$user.firstName" },
+            lastName: { $first: "$user.lastName" },
+            nationality: { $first: "$user.nationality" },
+          },
+        },
+
+        {
+          $facet: {
+            data: [{ $skip: (Number(page) - 1) * Number(limit) }, { $limit: Number(limit) }],
+            filterCount: [{ $count: "count" }],
+          },
+        },
+      ])
+    )[0];
+
+    return getPaginationSummary(data, filterCount["count"], { page, limit });
   }
 
   /**
