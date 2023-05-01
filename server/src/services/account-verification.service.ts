@@ -22,6 +22,7 @@ export class AccountVerificationService {
    * @async
    * @param {string} userId
    * @param {InitiateAccountVerificationDto} data
+   * @param {Array<IFileUploadData>} uploadData
    * @returns {Promise<IUser>}
    */
   async initiateAccountVerification(
@@ -136,6 +137,6 @@ export class AccountVerificationService {
       return foundVerification;
     }
 
-    throw new NotFoundError("User account-verificatiuon not found!");
+    throw new NotFoundError("User account-verification not found!");
   }
 }

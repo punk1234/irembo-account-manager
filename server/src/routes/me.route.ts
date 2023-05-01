@@ -10,6 +10,8 @@ const controller = Container.get(UserController);
 const verificationController = Container.get(AccountVerificationController);
 
 router.get("/profile", requireAuth(), controller.getProfile);
+router.patch("/profile", requireAuth(), imageMimeTypeValidator("photo"), controller.updateProfile);
+
 router.post(
   "/account/verification",
   requireAuth({ forAdmin: false }),

@@ -32,11 +32,11 @@ export class FileManager {
    * @param {string} bucket
    * @returns {Promise<string>}
    */
-  private async uploadFile(data: IFileUploadData, bucket: string): Promise<string> {
+  async uploadFile(data: IFileUploadData, bucket: string, fileId?: string): Promise<string> {
     const response = await cloudinary.uploader.upload(
       `data:${data.mimeType};base64,` + data.encodedContent,
       {
-        public_id: bucket + "/" + RandomCodeGenerator.getFromUUID(),
+        public_id: bucket + "/" + (fileId || RandomCodeGenerator.getFromUUID()),
       },
     );
 
