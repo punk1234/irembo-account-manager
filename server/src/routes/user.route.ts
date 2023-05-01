@@ -7,9 +7,15 @@ const router = express.Router();
 const verificationController = Container.get(AccountVerificationController);
 
 router.put(
-  "/users/:userId/account/verification/status",
+  "/:userId/account/verification/status",
   requireAuth({ forAdmin: true }),
   verificationController.updateAccountVerificationStatus,
+);
+
+router.get(
+  "/verification-requests",
+  // requireAuth({ forAdmin: true }),
+  verificationController.getAccountVerificationRequests,
 );
 
 export default router;

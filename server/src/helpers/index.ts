@@ -9,3 +9,4 @@ export { DbTransactionHelper } from "./db-transaction.helper";
 export { verifyAuthToken } from "./auth-token-verifier.helper";
 export { TotpAuthenticator } from "./totp-authenticator.helper";
 export { RandomCodeGenerator } from "./random-code-generator.helper";
+export { getPaginationSummary } from "./pagination-summary.helper";
