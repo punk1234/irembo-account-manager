@@ -1,14 +1,19 @@
-import { Service } from "typedi";
+import { Inject, Service } from "typedi";
+import { ClientSession } from "mongoose";
 import C from "../constants";
-import { PasswordHasher } from "../helpers";
-import { RegisterUserDto } from "../models";
+import config from "../config";
+import { IFileUploadData } from "../interfaces";
 import { IUser } from "../database/types/user.type";
 import UserModel from "../database/models/user.model";
-import { ConflictError, NotFoundError, UnauthenticatedError } from "../exceptions";
-import { ClientSession } from "mongoose";
+import { CountryManager, PasswordHasher } from "../helpers";
+import { FileManager } from "./external/file-manager.service";
+import { RegisterUserDto, UpdateProfileDto, User } from "../models";
+import { BadRequestError, ConflictError, NotFoundError, UnauthenticatedError } from "../exceptions";
 
 @Service()
 export class UserService {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(@Inject() private readonly fileManager: FileManager) {}
   /**
    * @method createUser
    * @async
@@ -22,6 +27,50 @@ export class UserService {
     const USER = new UserModel({ ...data, password: PASSWORD_HASH, nationality: data.countryCode });
 
     return USER.save({ session: dbSession });
+  }
+
+  /**
+   * @method updateProfile
+   * @async
+   * @param {string} userId
+   * @param {UpdateProfileDto} data
+   * @param {IFileUploadData} photoData
+   * @returns {Promise<IUser>}
+   */
+  async updateProfile(
+    userId: string,
+    data: UpdateProfileDto,
+    photoData?: IFileUploadData,
+  ): Promise<IUser> {
+    const updateData: Partial<User> = {};
+
+    if (data.nationality) {
+      if (!CountryManager.getNameByCode(data.nationality)) {
+        throw new BadRequestError("Invalid country!");
+      }
+
+      updateData.nationality = data.nationality;
+    }
+
+    data.firstName && (updateData.firstName = data.firstName);
+    data.lastName && (updateData.lastName = data.lastName);
+
+    data.gender && (updateData.gender = data.gender);
+    data.dateOfBirth && (updateData.dateOfBirth = data.dateOfBirth); // TODO: HANDLE CONSTRAINT MINIMUM AGE CONSTRAINT
+    data.maritalStatus && (updateData.maritalStatus = data.maritalStatus);
+
+    if (photoData) {
+      const photoUrl = await this.fileManager.uploadFile(photoData, config.PROFILE_PHOTO_BUCKET);
+      updateData.photoUrl = photoUrl;
+    }
+
+    const USER = await UserModel.findOneAndUpdate({ _id: userId }, updateData, { new: true });
+
+    if (USER) {
+      return USER;
+    }
+
+    throw new NotFoundError("User not found!");
   }
 
   /**

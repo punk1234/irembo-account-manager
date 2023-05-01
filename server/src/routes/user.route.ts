@@ -14,7 +14,7 @@ router.put(
 
 router.get(
   "/verification-requests",
-  // requireAuth({ forAdmin: true }),
+  requireAuth({ forAdmin: true }),
   verificationController.getAccountVerificationRequests,
 );
 

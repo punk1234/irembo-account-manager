@@ -212,7 +212,7 @@ paths:
         - "account"
       requestBody:
         content:
-          application/json:
+          "multipart/form-data":
             schema:
               $ref: "#/components/schemas/UpdateProfileDto"
       responses:

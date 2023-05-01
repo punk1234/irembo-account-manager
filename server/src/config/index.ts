@@ -32,4 +32,5 @@ export default {
   },
 
   VERIFICATION_DOCS_BUCKET: "account-vrfy-docs",
+  PROFILE_PHOTO_BUCKET: "profile-photos",
 };
