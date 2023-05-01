@@ -1,0 +1,16 @@
+node_modules
+dist
+logs
+tests
+.env
+sample.env
+Dockerfile
+
+.dockerignore
+.gitignore
+.prettierrc
+.prettierignore
+.eslintrc.json
+.eslintignore
+
+jest.setup.redis-mock.ts
