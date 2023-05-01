@@ -181,6 +181,27 @@ paths:
           $ref: "#/components/responses/ServerError"
 
   /me/profile:
+    get:
+       summary: "Get Profile"
+       description: "Get Profile"
+       operationId: getProfile
+       x-visibility: public
+       tags:
+         - "account"
+       responses:
+         "200":
+           description: "Success"
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/User"
+         "400":
+           $ref: "#/components/responses/InvalidRequest"
+         "401":
+           $ref: "#/components/responses/Unauthenticated"
+         "default":
+           $ref: "#/components/responses/ServerError"
+    
     patch:
       summary: "Update Profile"
       description: "Update Profile"
