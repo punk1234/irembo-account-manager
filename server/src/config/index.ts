@@ -30,4 +30,6 @@ export default {
     api_key: env.CLOUDINARY_API_KEY,
     api_secret: env.CLOUDINARY_API_SECRET,
   },
+
+  VERIFICATION_DOCS_BUCKET: "account-vrfy-docs",
 };

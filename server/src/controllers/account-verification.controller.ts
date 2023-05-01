@@ -1,18 +1,19 @@
 import { Inject, Service } from "typedi";
 import { Controller } from "../decorators";
 import { Request, Response } from "express";
-import { ResponseHandler } from "../helpers";
-import { UserService } from "../services/user.service";
+import { FileHelper, ResponseHandler } from "../helpers";
 import { InitiateAccountVerificationDto } from "../models";
 import { AccountVerificationService } from "../services/account-verification.service";
-import fs from "fs"
-import { FileConverter } from "../helpers/file-coverter.helper";
+import { IdentityDocVerifier } from "../services/external/identity-doc-verifier.service";
 
 @Service()
 @Controller()
 export class AccountVerificationController {
   // eslint-disable-next-line no-useless-constructor
-  constructor(@Inject() private readonly accountVerificationService: AccountVerificationService) {}
+  constructor(
+    @Inject() private readonly identityDocVerifier: IdentityDocVerifier,
+    @Inject() private readonly accountVerificationService: AccountVerificationService,
+  ) {}
 
   /**
    * @method initiateAccountVerification
@@ -21,13 +22,15 @@ export class AccountVerificationController {
    * @param {Response} res
    */
   async initiateAccountVerification(req: Request, res: Response) {
-    const FILES_BUFFERS = FileConverter.toBuffers(req.files as Express.Multer.File[]);
+    const data = req.body as InitiateAccountVerificationDto;
 
-    const USER = await this.accountVerificationService.initiateAccountVerification(
+    this.identityDocVerifier.verifyUserDocument(data.idNumber, data.idType);
+    const UPLOAD_DATA = FileHelper.toUploadData(req.files as Express.Multer.File[]);
+
+    await this.accountVerificationService.initiateAccountVerification(
       req.auth?.userId as string,
       req.body as InitiateAccountVerificationDto,
-      //   req.files as any,
-      FILES_BUFFERS
+      UPLOAD_DATA,
     );
 
     ResponseHandler.ok(res, { success: true });

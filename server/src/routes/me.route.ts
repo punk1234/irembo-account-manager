@@ -1,7 +1,7 @@
 import express from "express";
 import { Container } from "typedi";
-import { imageMimeTypeValidator, requireAuth } from "../middlewares";
 import { UserController } from "../controllers/user.controller";
+import { imageMimeTypeValidator, requireAuth } from "../middlewares";
 import { AccountVerificationController } from "../controllers/account-verification.controller";
 
 const router = express.Router();

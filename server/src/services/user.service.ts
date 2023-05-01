@@ -26,8 +26,9 @@ export class UserService {
 
   async resetVerifiedValue(userId: string): Promise<void> {
     const result = await UserModel.updateOne({ _id: userId }, { verified: false });
+    console.log(userId, result);
 
-    if(result.matchedCount) {
+    if (!result.matchedCount) {
       throw new NotFoundError("User not found!");
     }
   }

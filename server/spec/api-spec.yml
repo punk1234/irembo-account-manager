@@ -181,32 +181,12 @@ paths:
           $ref: "#/components/responses/ServerError"
 
   /me/profile:
-    get:
-      summary: "Get Profile"
-      description: "Get Profile"
-      operationId: getProfile
-      x-visibility: public
-      tags:
-        - "account"
-      responses:
-        "200":
-          description: "Success"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "400":
-          $ref: "#/components/responses/InvalidRequest"
-        "401":
-          $ref: "#/components/responses/Unauthenticated"
-        "default":
-          $ref: "#/components/responses/ServerError"
-
     patch:
       summary: "Update Profile"
       description: "Update Profile"
       operationId: updateProfile
       x-visibility: public
+      security: [ ]
       tags:
         - "account"
       requestBody:
@@ -225,6 +205,8 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthenticated"
+        # "429":
+        #   $ref: "#/components/responses/TooManyRequestError"
         "default":
           $ref: "#/components/responses/ServerError"
 
@@ -234,11 +216,12 @@ paths:
       description: "Initiate Account Verification"
       operationId: initiateAccountVerification
       x-visibility: public
+      security: [ ]
       tags:
         - "account"
       requestBody:
         content:
-          application/json:
+          "multipart/form-data":
             schema:
               $ref: "#/components/schemas/InitiateAccountVerificationDto"
       responses:
@@ -262,6 +245,7 @@ paths:
       description: "Get My Account-Verification Info"
       operationId: getMyAccountVerificationInfo
       x-visibility: public
+      security: [ ]
       tags:
         - "account"
       responses:
@@ -286,6 +270,7 @@ paths:
       description: "Update User Account-Verification Status (ADMIN ACCESS)"
       operationId: updateAccountVerificationStatus
       x-visibility: public
+      security: [ ]
       tags:
         - "account"
       requestBody:
@@ -319,6 +304,7 @@ paths:
       description: "Get Users Account-Verification Requests (ADMIN ACCESS)"
       operationId: getAccountVerificationRequests
       x-visibility: public
+      security: [ ]
       tags:
         - "account"
       responses:
@@ -486,6 +472,9 @@ components:
             type: "string"
             format: "binary"
             description: "Document image"
+          # type: "string"
+          # format: "binary"
+          # description: "Document image"
 
     UpdateAccountVerificationStatusDto:
       type: "object"
@@ -706,7 +695,7 @@ components:
       type: "string"
       description: "Identification types"
       enum: &IdentificationType
-        - NIN
+        - NID
         - PASSPORT
 
     VerificationStatus:

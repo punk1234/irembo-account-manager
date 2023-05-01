@@ -9,38 +9,33 @@ import { BadRequestError } from "../exceptions";
  * @description
  * This is a validation middleware that validates all image requests
  */
-export const imageMimeTypeValidator =
-  (field: string, required: boolean = true) =>
-    (req: Request, res: Response, next: NextFunction) => {
-      const files: any = req.files;
-      const fieldValue: string = req.body[field];
+export default (field: string, required: boolean = true) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    const files: any = req.files;
+    let fileType: any;
 
-      let fileType: any;
+    try {
+      req.body[field] = undefined;
 
-      try {
-        if (fieldValue) {
-          throw new BadRequestError(`${field} is not an image`);
-        }
+      for (const file of files) {
+        if (file.fieldname == field) {
+          fileType = file.mimetype.split("/")[0];
 
-        for (const file of files) {
-          if (file.fieldname == field) {
-            fileType = file.mimetype.split("/")[0];
-
-            if (fileType != "image") {
-              throw new BadRequestError(`${field} is not an image`);
-            }
+          if (fileType != "image") {
+            throw new BadRequestError(`${field} is not an image`);
           }
         }
-
-        if (required && !fileType) {
-          throw new BadRequestError(`${field} must be uploaded`);
-        }
-
-        next();
-      } catch (err: any) {
-        res.status(err.statusCode).json({
-          code: err.constructor.name,
-          message: err.message,
-        });
       }
-    };
+
+      if (required && !fileType) {
+        throw new BadRequestError(`${field} must be uploaded`);
+      }
+
+      next();
+    } catch (err: any) {
+      res.status(err.statusCode).json({
+        code: err.constructor.name,
+        message: err.message,
+      });
+    }
+  };
