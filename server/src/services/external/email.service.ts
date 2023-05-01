@@ -66,4 +66,14 @@ export class EmailService {
        Thanks.`,
     );
   }
+
+  sendPasswordResetLink(toEmail: string, resetLink: string, name?: string): void {
+    this.send(
+      toEmail,
+      "Irembo Account-Manager Password Reset",
+      `Hi ${name || "@user"},
+       Kindly use ${resetLink} to reset password.
+       Thanks.`,
+    );
+  }
 }

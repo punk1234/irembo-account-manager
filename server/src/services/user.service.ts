@@ -40,6 +40,21 @@ export class UserService {
   }
 
   /**
+   * @method checkThatUserEmailExist
+   * @async
+   * @param {string} email
+   * @returns {Promise<IUser>}
+   */
+  async checkThatUserEmailExist(email: string): Promise<IUser> {
+    const foundUser = await this.getUserByEmail(email);
+    if (foundUser) {
+      return foundUser;
+    }
+
+    throw new NotFoundError("User not found!");
+  }
+
+  /**
    * @method getUserByEmail
    * @async
    * @param {string} email
