@@ -18,6 +18,11 @@ import { User } from './user';
  * @interface LoginResponse
  */
 export interface LoginResponse {
+    /**
+     * Indicates if login strategy is passwordless or with password
+     * @type {boolean}
+     * @memberof LoginResponse
+     */
     isPasswordless?: boolean;
     /**
      * 

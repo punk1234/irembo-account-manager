@@ -32,7 +32,7 @@ export interface UpdateProfileDto {
      */
     lastName?: string;
     /**
-     * User's country code (alpah2-code)
+     * User's country code (alpha2-code)
      * @type {string}
      * @memberof UpdateProfileDto
      */
