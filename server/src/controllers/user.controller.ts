@@ -44,4 +44,16 @@ export class UserController {
 
     ResponseHandler.ok(res, USER);
   }
+
+  /**
+   * @method getUsers
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async getUsers(req: Request, res: Response) {
+    const USERS = await this.userService.getUsers(req.query);
+
+    ResponseHandler.ok(res, USERS);
+  }
 }

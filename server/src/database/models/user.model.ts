@@ -3,6 +3,8 @@ import { model, Schema } from "mongoose";
 import { IUser } from "../types/user.type";
 import { Gender, MaritalStatus } from "../../models";
 import { MongooseUuid } from "../mongoose-uuid.type";
+import { paginationPlugin } from "../plugins/mongoose-pagination.plugin";
+import { IPaginatedModel } from "../../interfaces";
 
 const UserSchema = new Schema(
   {
@@ -60,4 +62,6 @@ const UserSchema = new Schema(
   },
 );
 
-export default model<IUser>("users", UserSchema);
+UserSchema.plugin(paginationPlugin);
+
+export default model<IUser, IPaginatedModel<IUser>>("users", UserSchema);

@@ -2,7 +2,7 @@ import { Inject, Service } from "typedi";
 import { ClientSession } from "mongoose";
 import C from "../constants";
 import config from "../config";
-import { IFileUploadData } from "../interfaces";
+import { IFileUploadData, IPaginatedData } from "../interfaces";
 import { IUser } from "../database/types/user.type";
 import UserModel from "../database/models/user.model";
 import { CountryManager, PasswordHasher } from "../helpers";
@@ -71,6 +71,18 @@ export class UserService {
     }
 
     throw new NotFoundError("User not found!");
+  }
+
+  /**
+   * @method getUsers
+   * @instance
+   * @param {Record<string, any>} filter
+   * @returns {Promise<IPaginatedData<IUser>>}
+   */
+  getUsers(filter: Record<string, any>): Promise<IPaginatedData<IUser>> {
+    const { page = 1, limit = 10 } = filter;
+
+    return UserModel.find().sort({ email: 1 }).paginate({ page, limit });
   }
 
   /**
