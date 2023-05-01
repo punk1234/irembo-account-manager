@@ -122,10 +122,7 @@ export class AuthService {
     const USER = await this.userService.checkThatUserExist(userId);
     const AUTH_TOKEN_PAYLOAD = this.generateUserAuthTokenPayload(USER);
 
-    const AUTH_TOKEN = JwtHelper.generateToken(
-      AUTH_TOKEN_PAYLOAD,
-      config.AUTH_2FA_TOKEN_TTL_IN_MILLISECS,
-    );
+    const AUTH_TOKEN = JwtHelper.generateToken(AUTH_TOKEN_PAYLOAD, config.AUTH_TOKEN_TTL_IN_HOURS);
 
     return { user: USER.toJSON(), token: AUTH_TOKEN };
   }
@@ -135,7 +132,10 @@ export class AuthService {
     this.userService.checkThatPasswordsMatch(data.password, user.password as string);
     const AUTH_TOKEN_PAYLOAD = this.generateUserAuthTokenPayload(user, C.AuthTokenType.VERIFY_2FA);
 
-    const AUTH_TOKEN = JwtHelper.generateToken(AUTH_TOKEN_PAYLOAD, config.AUTH_TOKEN_TTL_IN_HOURS);
+    const AUTH_TOKEN = JwtHelper.generateToken(
+      AUTH_TOKEN_PAYLOAD,
+      config.AUTH_2FA_TOKEN_TTL_IN_MILLISECS,
+    );
     const TWO_FA_SECRET = await this.twoFaService.getTwoFaSecretIfNotSetup(user._id.toUUIDString());
 
     const twoFaSetupCode =
