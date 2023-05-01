@@ -231,6 +231,35 @@ paths:
         "default":
           $ref: "#/components/responses/ServerError"
 
+  /me/password/change:
+    post:
+      summary: "Change Password"
+      operationId: changePassword
+      description: "Change Password"
+      x-visibility: "public"
+      tags:
+        - "accounts"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordDto"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusDto"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/AccessDenied"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
   /me/account/verification:
     post:
       summary: "Initiate Account Verification"
@@ -310,6 +339,8 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/AccessDenied"
         "409":
           $ref: "#/components/responses/ConflictError"
         "default":
@@ -339,8 +370,38 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/AccessDenied"
         "409":
           $ref: "#/components/responses/ConflictError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /users:
+    parameters:
+      - $ref: "#/components/parameters/pageQuery"
+      - $ref: "#/components/parameters/limitQuery"
+    get:
+      summary: "Get Users"
+      description: "Get Users (ADMIN ACCESS)"
+      operationId: getUsers
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "account"
+      responses:
+        "200":
+          description: "Success"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserListResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "403":
+          $ref: "#/components/responses/AccessDenied"
         "default":
           $ref: "#/components/responses/ServerError"
   
@@ -506,6 +567,22 @@ components:
         status:
           $ref: "#/components/schemas/VerificationStatus"
 
+    ChangePasswordDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "password"
+        - "newPassword"
+      properties:
+        password:
+          type: "string"
+          minLength: 4
+          description: "Current password"
+        newPassword:
+          type: "string"
+          minLength: 4
+          description: "New password"
+
     # RESPONSE OBJECT DEFINITIONS
 
     LoginResponse:
@@ -580,6 +657,17 @@ components:
         updatedAt:
           type: "string"
           format: "date-time"
+
+    UserListResponse:
+      # TO BE UPDATED TO THE PAGINATED RESPONSE FORMAT
+      type: "object"
+      required:
+        - records
+      properties:
+        records:
+          type: "array"
+          items:
+            $ref: '#/components/schemas/User'
 
     VerifyTwoFaResponse:
       type: "object"
