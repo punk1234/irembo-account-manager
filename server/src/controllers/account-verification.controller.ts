@@ -5,6 +5,7 @@ import { FileHelper, ResponseHandler } from "../helpers";
 import { InitiateAccountVerificationDto } from "../models";
 import { AccountVerificationService } from "../services/account-verification.service";
 import { IdentityDocVerifier } from "../services/external/identity-doc-verifier.service";
+import { IAccountVerification } from "../database/types/account-verification.type";
 
 @Service()
 @Controller()
@@ -34,5 +35,18 @@ export class AccountVerificationController {
     );
 
     ResponseHandler.ok(res, { success: true });
+  }
+
+  /**
+   * @method getVerificationInfo
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async getVerificationInfo(req: Request, res: Response) {
+    const verificationInfo: IAccountVerification | null =
+      await this.accountVerificationService.getVerificationInfo(req.auth?.userId as string);
+
+    ResponseHandler.ok(res, { success: !!verificationInfo, data: verificationInfo });
   }
 }
