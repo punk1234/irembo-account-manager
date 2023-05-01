@@ -7,7 +7,7 @@ import { IUser } from "../database/types/user.type";
 import UserModel from "../database/models/user.model";
 import { CountryManager, PasswordHasher } from "../helpers";
 import { FileManager } from "./external/file-manager.service";
-import { RegisterUserDto, UpdateProfileDto, User } from "../models";
+import { ChangePasswordDto, RegisterUserDto, UpdateProfileDto, User } from "../models";
 import { BadRequestError, ConflictError, NotFoundError, UnauthenticatedError } from "../exceptions";
 
 @Service()
@@ -71,6 +71,23 @@ export class UserService {
     }
 
     throw new NotFoundError("User not found!");
+  }
+
+  /**
+   * @method changePassword
+   * @async
+   * @param {string} userId
+   * @param {RegisterUserDto} data
+   * @returns {Promise<IUser>}
+   */
+  async changePassword(userId: string, data: ChangePasswordDto): Promise<IUser> {
+    const USER = await this.checkThatUserExist(userId);
+    this.checkThatPasswordsMatch(data.password, USER.password as string);
+
+    // TODO: DESTROY SESSION AUTH-TOKEN IN CACHE
+    USER.password = PasswordHasher.hash(data.newPassword);
+
+    return USER.save();
   }
 
   /**

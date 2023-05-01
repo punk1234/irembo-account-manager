@@ -3,7 +3,7 @@ import { Controller } from "../decorators";
 import { Request, Response } from "express";
 import { FileHelper, ResponseHandler } from "../helpers";
 import { UserService } from "../services/user.service";
-import { UpdateProfileDto } from "../models";
+import { ChangePasswordDto, UpdateProfileDto } from "../models";
 
 @Service()
 @Controller()
@@ -43,6 +43,21 @@ export class UserController {
     );
 
     ResponseHandler.ok(res, USER);
+  }
+
+  /**
+   * @method changePassword
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async changePassword(req: Request, res: Response) {
+    await this.userService.changePassword(
+      req.auth?.userId as string,
+      req.body as ChangePasswordDto,
+    );
+
+    ResponseHandler.ok(res, { success: true });
   }
 
   /**
