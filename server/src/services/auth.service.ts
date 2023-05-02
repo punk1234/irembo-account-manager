@@ -111,8 +111,6 @@ export class AuthService {
     await this.passwordResetService.saveToken(USER._id.toUUIDString(), RESET_TOKEN);
     const RESET_LINK = `${config.WEB_APP_URL}?token=${encodeURIComponent(ENCODED_RESET_TOKEN)}`;
 
-    RateLimitManager.reset(email, C.ApiRateLimiterType.GENERATE_RESET_TOKEN).catch();
-
     // TODO: HANDLE EMAIL ERROR
     this.emailService.sendPasswordResetLink(
       USER.email,
