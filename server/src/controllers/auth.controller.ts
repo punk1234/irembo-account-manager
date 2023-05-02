@@ -36,6 +36,19 @@ export class AuthController {
   }
 
   /**
+   * @method logout
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async logout(req: Request, res: Response) {
+    // TODO: SESSION MANAGEMENT
+    // await this.sessionService.invalidateSession(req.auth?.userId as string);
+
+    ResponseHandler.ok(res, { success: true });
+  }
+
+  /**
    * @method verifyTwoFa
    * @async
    * @param {Request} req
