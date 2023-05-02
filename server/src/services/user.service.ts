@@ -5,7 +5,7 @@ import config from "../config";
 import { IFileUploadData, IPaginatedData } from "../interfaces";
 import { IUser } from "../database/types/user.type";
 import UserModel from "../database/models/user.model";
-import { CountryManager, PasswordHasher } from "../helpers";
+import { CountryManager, PasswordHasher, RateLimitManager } from "../helpers";
 import { FileManager } from "./external/file-manager.service";
 import { ChangePasswordDto, RegisterUserDto, UpdateProfileDto, User } from "../models";
 import { BadRequestError, ConflictError, NotFoundError, UnauthenticatedError } from "../exceptions";
@@ -83,6 +83,8 @@ export class UserService {
   async changePassword(userId: string, data: ChangePasswordDto): Promise<IUser> {
     const USER = await this.checkThatUserExist(userId);
     this.checkThatPasswordsMatch(data.password, USER.password as string);
+
+    RateLimitManager.reset(userId, C.ApiRateLimiterType.CHANGE_PASSWORD).catch();
 
     // TODO: DESTROY SESSION AUTH-TOKEN IN CACHE
     USER.password = PasswordHasher.hash(data.newPassword);

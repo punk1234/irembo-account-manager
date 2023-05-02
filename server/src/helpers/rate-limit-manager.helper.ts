@@ -35,6 +35,7 @@ export class RateLimitManager {
   /**
    * @method reset
    * @static
+   * @async
    * @param {string} userId
    * @param {ApiRateLimiterType} rateLimitType
    */
