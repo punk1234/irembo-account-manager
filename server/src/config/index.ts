@@ -1,5 +1,6 @@
 import C from "../constants";
 import { config as getEnvVariables } from "dotenv";
+import apiRateLimitingConfig from "./api-rate-limiting.config";
 
 getEnvVariables();
 
@@ -33,4 +34,6 @@ export default {
 
   VERIFICATION_DOCS_BUCKET: "account-vrfy-docs",
   PROFILE_PHOTO_BUCKET: "profile-photos",
+
+  API_RATE_LIMITING: apiRateLimitingConfig,
 };

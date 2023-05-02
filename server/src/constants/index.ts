@@ -3,6 +3,7 @@ import { Environment } from "./environment.const";
 import { AuthTokenType } from "./auth-token-type.const";
 import { HttpStatusCode } from "./http-status-code.const";
 import { ResponseMessage } from "./response-message.const";
+import { ApiRateLimiterType } from "./api-rate-limiter-type.const";
 
 export default {
   Regex,
@@ -10,4 +11,5 @@ export default {
   HttpStatusCode,
   ResponseMessage,
   AuthTokenType,
+  ApiRateLimiterType,
 };
