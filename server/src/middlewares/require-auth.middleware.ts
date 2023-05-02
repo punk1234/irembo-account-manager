@@ -1,12 +1,12 @@
 import C from "../constants";
-// import Container from "typedi";
+import Container from "typedi";
 import { verifyAuthToken } from "../helpers";
-import { IAuthTokenPayload, IVerifyAuthOptions } from "../interfaces";
 import { NextFunction, Request, Response } from "express";
-// import { SessionService } from "../services/session.service";
-import { UnauthorizedError } from "../exceptions";
+import { SessionService } from "../services/session.service";
+import { IAuthTokenPayload, IVerifyAuthOptions } from "../interfaces";
+import { UnauthenticatedError, UnauthorizedError } from "../exceptions";
 
-// const sessionService = Container.get(SessionService);
+const sessionService = Container.get(SessionService);
 
 /**
  * @function requireAuth
@@ -18,10 +18,10 @@ export const requireAuth = (opts?: IVerifyAuthOptions) => {
     try {
       const authTokenPayload: IAuthTokenPayload = verifyAuthToken(req.headers);
 
-      // const userAuthSessionId = await sessionService.getUserSession(authTokenPayload.userId);
-      // if (authTokenPayload.sessionId !== userAuthSessionId) {
-      //   throw new UnauthenticatedError(C.ResponseMessage.ERR_UNAUTHENTICATED);
-      // }
+      const userAuthSessionId = await sessionService.getUserSession(authTokenPayload.userId);
+      if (authTokenPayload.sessionId !== userAuthSessionId) {
+        throw new UnauthenticatedError(C.ResponseMessage.ERR_UNAUTHENTICATED);
+      }
 
       if (opts?.tokenType !== authTokenPayload.type) {
         next(new UnauthorizedError(C.ResponseMessage.ERR_UNAUTHORIZED));

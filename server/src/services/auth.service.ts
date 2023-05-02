@@ -24,9 +24,11 @@ import {
   DbTransactionHelper,
   JwtHelper,
   Logger,
+  RateLimitManager,
   TotpAuthenticator,
 } from "../helpers";
 import { PasswordResetService } from "./password-reset.service";
+import { SessionService } from "./session.service";
 
 @Service()
 export class AuthService {
@@ -35,6 +37,7 @@ export class AuthService {
     @Inject() private readonly userService: UserService,
     @Inject() private readonly twoFaService: TwoFaService,
     @Inject() private readonly emailService: EmailService,
+    @Inject() private readonly sessionService: SessionService,
     @Inject() private readonly passwordResetService: PasswordResetService,
   ) {}
 
@@ -108,6 +111,8 @@ export class AuthService {
     await this.passwordResetService.saveToken(USER._id.toUUIDString(), RESET_TOKEN);
     const RESET_LINK = `${config.WEB_APP_URL}?token=${encodeURIComponent(ENCODED_RESET_TOKEN)}`;
 
+    RateLimitManager.reset(email, C.ApiRateLimiterType.GENERATE_RESET_TOKEN).catch();
+
     // TODO: HANDLE EMAIL ERROR
     this.emailService.sendPasswordResetLink(
       USER.email,
@@ -125,6 +130,8 @@ export class AuthService {
   async resetPassword(data: ResetPasswordDto): Promise<void> {
     await this.passwordResetService.checkThatUserResetTokenIsValid(data.userId, data.token);
     await this.userService.updatePassword(data.userId, data.password);
+
+    RateLimitManager.reset(data.userId, C.ApiRateLimiterType.RESET_PASSWORD).catch();
 
     this.passwordResetService.deleteUserToken(data.userId).catch(Logger.error);
   }
@@ -144,6 +151,11 @@ export class AuthService {
 
     const AUTH_TOKEN = JwtHelper.generateToken(AUTH_TOKEN_PAYLOAD, config.AUTH_TOKEN_TTL_IN_HOURS);
 
+    RateLimitManager.reset(userId, C.ApiRateLimiterType.VERIFY_2FA).catch();
+    await this.sessionService.registerSession(userId, AUTH_TOKEN_PAYLOAD.sessionId);
+
+    Logger.info(`User <${userId}> logged in successfully. Session=${AUTH_TOKEN_PAYLOAD.sessionId}`);
+
     return { user: USER.toJSON(), token: AUTH_TOKEN };
   }
 
@@ -156,17 +168,19 @@ export class AuthService {
       AUTH_TOKEN_PAYLOAD,
       config.AUTH_2FA_TOKEN_TTL_IN_MILLISECS,
     );
+
     const TWO_FA_SECRET = await this.twoFaService.getTwoFaSecretIfNotSetup(user._id.toUUIDString());
 
     const twoFaSetupCode =
       TWO_FA_SECRET &&
       (await QrCode.toDataURL(TotpAuthenticator.getQrCode(TWO_FA_SECRET, data.email)));
 
-    // TODO: HANDLE SESSION MANAGEMENT USING CACHING MECHANISM
+    RateLimitManager.reset(user.email, C.ApiRateLimiterType.AUTH_LOGIN).catch();
+
     return { user, token: AUTH_TOKEN, twoFaSetupCode } as LoginResponse;
   }
 
-  private handlePasswordlessLogin(user: IUser): void {
+  private async handlePasswordlessLogin(user: IUser): Promise<void> {
     // TODO: ADD DESCRIPTION
     const AUTH_TOKEN_PAYLOAD = this.generateUserAuthTokenPayload(user);
     let authToken = JwtHelper.generateToken(AUTH_TOKEN_PAYLOAD, config.AUTH_TOKEN_TTL_IN_HOURS);
@@ -178,6 +192,15 @@ export class AuthService {
 
     console.debug(authToken); // TODO: TO BE REMOVED
     const LOGIN_LINK = `${config.WEB_APP_URL}?code=${authToken}`;
+
+    RateLimitManager.reset(user.email, C.ApiRateLimiterType.AUTH_LOGIN).catch();
+    await this.sessionService.registerSession(user._id.toString(), AUTH_TOKEN_PAYLOAD.sessionId);
+
+    Logger.info(
+      `User <${user._id.toString()}> logged in successfully. Session=${
+        AUTH_TOKEN_PAYLOAD.sessionId
+      }`,
+    );
 
     this.emailService.sendPasswordlessLoginLink(
       user.email,
@@ -214,6 +237,7 @@ export class AuthService {
       userId: user._id.toUUIDString(),
       isAdmin: user.isAdmin,
       type: tokenType,
+      sessionId: crypto.randomUUID().replace(/-/g, "") + crypto.randomBytes(4).toString("hex"),
     };
   }
 }

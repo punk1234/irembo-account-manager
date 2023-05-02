@@ -8,6 +8,10 @@ export default {
     window: ONE_HOUR_WINDOW_IN_SECONDS,
     limit: 3,
   },
+  [ApiRateLimiterType.VERIFY_2FA]: {
+    window: ONE_HOUR_WINDOW_IN_SECONDS,
+    limit: 3,
+  },
   [ApiRateLimiterType.GENERATE_RESET_TOKEN]: {
     window: ONE_HOUR_WINDOW_IN_SECONDS,
     limit: 5,

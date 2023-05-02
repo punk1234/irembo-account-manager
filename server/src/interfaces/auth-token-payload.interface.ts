@@ -7,5 +7,5 @@ export interface IAuthTokenPayload {
   userId: string;
   isAdmin: boolean;
   type?: AuthTokenType;
-  // sessionId: string;
+  sessionId: string;
 }
