@@ -13,12 +13,19 @@ import {
   LoginDto,
   LoginResponse,
   RegisterUserDto,
+  ResetPasswordDto,
   VerifyTwoFaDto,
   VerifyTwoFaResponse,
 } from "../models";
 import { AuthTokenType } from "../constants/auth-token-type.const";
 import { BadRequestError, UnauthenticatedError } from "../exceptions";
-import { CountryManager, DbTransactionHelper, JwtHelper, TotpAuthenticator } from "../helpers";
+import {
+  CountryManager,
+  DbTransactionHelper,
+  JwtHelper,
+  Logger,
+  TotpAuthenticator,
+} from "../helpers";
 import { PasswordResetService } from "./password-reset.service";
 
 @Service()
@@ -93,7 +100,7 @@ export class AuthService {
     /** TOTAL OF (36+1+40+1=78%3=0), SO THERE'S NO PADDING OF `=` or `==` AT THE END */
     const ENCODED_RESET_TOKEN =
       crypto.randomBytes(6).toString("base64") + // RANDOM UNUSED TOKEN (8 chars)
-      Buffer.from(`${USER._id.toUUIDString()}@${RESET_TOKEN}$`).toString("base64");
+      Buffer.from(`${USER._id.toUUIDString()}@${RESET_TOKEN}I`).toString("base64");
 
     // console.debug("RESET_TOKEN", RESET_TOKEN.length, RESET_TOKEN);
     // console.debug("ENCODED_RESET_TOKEN", ENCODED_RESET_TOKEN);
@@ -107,6 +114,19 @@ export class AuthService {
       RESET_LINK,
       USER.firstName || USER.lastName,
     );
+  }
+
+  /**
+   * @method resetPassword
+   * @async
+   * @param {ResetPasswordDto} data
+   * @returns {Promise<void>}
+   */
+  async resetPassword(data: ResetPasswordDto): Promise<void> {
+    await this.passwordResetService.checkThatUserResetTokenIsValid(data.userId, data.token);
+    await this.userService.updatePassword(data.userId, data.password);
+
+    this.passwordResetService.deleteUserToken(data.userId).catch(Logger.error);
   }
 
   /**

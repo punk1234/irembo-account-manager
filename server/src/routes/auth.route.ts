@@ -19,5 +19,6 @@ router.post(
 );
 
 router.post("/password/reset/send-link", controller.sendPasswordResetLink);
+router.post("/password/reset", controller.resetPassword);
 
 export default router;
