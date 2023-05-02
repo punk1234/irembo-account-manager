@@ -10,6 +10,8 @@ const controller = Container.get(AuthController);
 router.post("/register", controller.register);
 router.post("/login", controller.login);
 
+router.post("/logout", requireAuth(), controller.logout);
+
 router.post(
   "/twoFa/verify",
   requireAuth({ tokenType: C.AuthTokenType.VERIFY_2FA }),
