@@ -5,9 +5,10 @@ services:
     restart: always
     build: .
     ports:
-      - "8082:8082"
+      - "8882:8882"
     links:
       - mongo
+      - redis
     networks:
       - webnet
 
@@ -17,8 +18,6 @@ services:
     image: redis
     environment:
       - REDIS_URL=${REDIS_URL}
-    ports:
-      - "6677:6677"
     networks:
       - webnet
 
@@ -28,7 +27,7 @@ services:
     volumes:
       - ./data:/data/db
     ports:
-      - "27015:27015"
+      - "27017:27017"
     networks:
       - webnet
 

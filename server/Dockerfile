@@ -2,8 +2,8 @@
 # Usage docker build --build-arg TARGET_SERVICE=service-folder
 FROM node:17
 
-ENV PORT 80
-EXPOSE 80
+ENV PORT 8882
+EXPOSE 8882
 
 RUN npm install -g pm2@latest
 
