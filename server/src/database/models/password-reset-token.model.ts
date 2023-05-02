@@ -17,7 +17,7 @@ const PasswordResetTokenSchema = new Schema(
       type: Date,
       required: true,
       default: Date.now,
-      expires: 60, // MOVE TO CONFIG
+      expires: 120, // MOVE TO CONFIG
     },
   },
   {

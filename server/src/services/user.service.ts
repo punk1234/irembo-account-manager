@@ -91,6 +91,21 @@ export class UserService {
   }
 
   /**
+   * @method updatePassword
+   * @async
+   * @param {string} userId
+   * @param {string} plainTextPassword
+   * @returns {Promise<void>}
+   */
+  async updatePassword(userId: string, plainTextPassword: string): Promise<void> {
+    // TODO: DESTROY SESSION AUTH-TOKEN IN CACHE
+    await UserModel.updateOne(
+      { _id: userId },
+      { password: PasswordHasher.hash(plainTextPassword) },
+    );
+  }
+
+  /**
    * @method getUsers
    * @instance
    * @param {Record<string, any>} filter

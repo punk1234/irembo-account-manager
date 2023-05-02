@@ -2,7 +2,13 @@ import { Inject, Service } from "typedi";
 import { Controller } from "../decorators";
 import { Request, Response } from "express";
 import { ResponseHandler } from "../helpers";
-import { LoginDto, RegisterUserDto, SendPasswordResetLinkDto, VerifyTwoFaDto } from "../models";
+import {
+  LoginDto,
+  RegisterUserDto,
+  ResetPasswordDto,
+  SendPasswordResetLinkDto,
+  VerifyTwoFaDto,
+} from "../models";
 import { AuthService } from "../services/auth.service";
 
 @Service()
@@ -73,5 +79,17 @@ export class AuthController {
     await this.authService.sendPasswordResetLink((req.body as SendPasswordResetLinkDto).email);
 
     ResponseHandler.ok(res, { message: "Check your mail for reset-link!" });
+  }
+
+  /**
+   * @method resetPassword
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async resetPassword(req: Request, res: Response) {
+    await this.authService.resetPassword(req.body as ResetPasswordDto);
+
+    ResponseHandler.ok(res, { success: true });
   }
 }

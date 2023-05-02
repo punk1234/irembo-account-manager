@@ -484,6 +484,7 @@ components:
           description: "User's identifier"
         token:
           type: "string"
+          minLength: 20
           description: "Password reset-token to reset password"
         password:
           type: string
