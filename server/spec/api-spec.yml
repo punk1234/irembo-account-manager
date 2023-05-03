@@ -17,8 +17,12 @@ servers:
 tags:
   - name: auth
     description: "Authentication related endpoints"
-  - name: account
+  - name: profiles
+    description: "Profile related endpoints"
+  - name: accounts
     description: "Account related endpoints"
+  - name: verification-requests
+    description: "Verification Request related endpoints"
 
 security:
   - bearerToken: [ ]
@@ -149,8 +153,8 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthenticated"
-        # "429":
-        #   $ref: "#/components/responses/TooManyRequestError"
+        "429":
+          $ref: "#/components/responses/TooManyRequestError"
         "default":
           $ref: "#/components/responses/ServerError"
 
@@ -175,8 +179,34 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthenticated"
-        # "429":
-        #   $ref: "#/components/responses/TooManyRequestError"
+        "429":
+          $ref: "#/components/responses/TooManyRequestError"
+        "default":
+          $ref: "#/components/responses/ServerError"
+
+  /auth/account/verify:
+    post:
+      summary: "Verify Account"
+      description: "Verify Account"
+      operationId: verifyAccount
+      x-visibility: public
+      security: [ ]
+      tags:
+        - "auth"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyAccountDto"
+      responses:
+        "200":
+          $ref: "#/components/responses/StatusResponse"
+        "400":
+          $ref: "#/components/responses/InvalidRequest"
+        "401":
+          $ref: "#/components/responses/Unauthenticated"
+        "429":
+          $ref: "#/components/responses/TooManyRequestError"
         "default":
           $ref: "#/components/responses/ServerError"
 
@@ -187,7 +217,7 @@ paths:
        operationId: getProfile
        x-visibility: public
        tags:
-         - "account"
+         - "profiles"
        responses:
          "200":
            description: "Success"
@@ -209,7 +239,7 @@ paths:
       x-visibility: public
       security: [ ]
       tags:
-        - "account"
+        - "profiles"
       requestBody:
         content:
           "multipart/form-data":
@@ -226,8 +256,6 @@ paths:
           $ref: "#/components/responses/InvalidRequest"
         "401":
           $ref: "#/components/responses/Unauthenticated"
-        # "429":
-        #   $ref: "#/components/responses/TooManyRequestError"
         "default":
           $ref: "#/components/responses/ServerError"
 
@@ -257,6 +285,8 @@ paths:
           $ref: "#/components/responses/Unauthenticated"
         "403":
           $ref: "#/components/responses/AccessDenied"
+        "429":
+          $ref: "#/components/responses/TooManyRequestError"
         "default":
           $ref: "#/components/responses/ServerError"
 
@@ -268,7 +298,7 @@ paths:
       x-visibility: public
       security: [ ]
       tags:
-        - "account"
+        - "verification-requests"
       requestBody:
         content:
           "multipart/form-data":
@@ -297,7 +327,7 @@ paths:
       x-visibility: public
       security: [ ]
       tags:
-        - "account"
+        - "verification-requests"
       responses:
         "200":
           description: "Success"
@@ -322,7 +352,7 @@ paths:
       x-visibility: public
       security: [ ]
       tags:
-        - "account"
+        - "verification-requests"
       requestBody:
         content:
           application/json:
@@ -358,7 +388,7 @@ paths:
       x-visibility: public
       security: [ ]
       tags:
-        - "account"
+        - "verification-requests"
       responses:
         "200":
           description: "Success"
@@ -388,7 +418,7 @@ paths:
       x-visibility: public
       security: [ ]
       tags:
-        - "account"
+        - "accounts"
       responses:
         "200":
           description: "Success"
@@ -491,6 +521,22 @@ components:
           format: "password"
           pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%^*?&-])[A-Za-z\d@$#!%^*?&-]{8,20}$'
           description: "User's new password"
+
+    VerifyAccountDto:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "userId"
+        - "token"
+      properties:
+        userId:
+          type: "string"
+          format: "uuid"
+          description: "User's identifier"
+        token:
+          type: "string"
+          minLength: 20
+          description: "Verify-token to activate account"
 
     SendPasswordResetLinkDto:
       type: "object"
