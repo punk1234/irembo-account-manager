@@ -55,12 +55,22 @@ export class EmailService {
       .catch(Logger.error);
   }
 
+  sendWelcomeAndActivationMsg(toEmail: string, activationLink: string, name?: string): void {
+    this.send(
+      toEmail,
+      "Welcome to Irembo - ACCOUNT VERIFICATION 🎉🎉🎉",
+      `Hi ${name || "@user"},
+       Welcome to Irembo. Kindly activate your account using <a href="${activationLink}">link</a>.
+       Thanks.`,
+    );
+  }
+
   sendPasswordlessLoginLink(toEmail: string, loginLink: string, name?: string): void {
     this.send(
       toEmail,
       "Irembo Account-Manager Passwordless Login",
       `Hi ${name || "@user"},
-       Kindly login using ${loginLink}.
+       Kindly login using <a href="${loginLink}">link</a>.
        Thanks.`,
     );
   }
@@ -70,7 +80,7 @@ export class EmailService {
       toEmail,
       "Irembo Account-Manager Password Reset",
       `Hi ${name || "@user"},
-       Kindly use ${resetLink} to reset password.
+       Kindly use <a href="${resetLink}">link</a> to reset password.
        Thanks.`,
     );
   }
