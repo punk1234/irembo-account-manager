@@ -670,6 +670,9 @@ components:
         isAdmin:
           type: "boolean"
           description: "Indicates if user is an admin or just a normal user"
+        active:
+          type: "boolean"
+          default: false
         verified:
           type: "boolean"
           default: false
