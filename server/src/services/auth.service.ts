@@ -74,6 +74,12 @@ export class AuthService {
       TOKEN.encoded,
     )}`;
 
+    await this.userTokenService.saveToken(
+      user._id.toUUIDString(),
+      TOKEN.value,
+      C.UserTokenType.VERIFY_ACCOUNT,
+    );
+
     this.emailService.sendWelcomeAndActivationMsg(
       user.email,
       VERIFICATION_LINK,
@@ -91,6 +97,13 @@ export class AuthService {
     data.email = data.email.toLowerCase();
 
     const USER = await this.checkThatUserExistByEmailForLogin(data.email);
+
+    if (!USER.active) {
+      // User account is not confirmed, or has been de-activated!
+      throw new UnauthenticatedError(C.ResponseMessage.ERR_INVALID_CREDENTIALS);
+      // SEND VERIFY-ACCOUNT EMAIL
+    }
+
     let response: LoginResponse = { isPasswordless: true };
 
     if (data.password) {
@@ -194,6 +207,7 @@ export class AuthService {
       data.token,
       C.UserTokenType.VERIFY_ACCOUNT,
     );
+
     await this.userService.markUserAsActive(data.userId);
 
     RateLimitManager.reset(data.userId, C.ApiRateLimiterType.VERIFY_ACCOUNT).catch();
@@ -225,6 +239,13 @@ export class AuthService {
     return { user: USER.toJSON(), token: AUTH_TOKEN };
   }
 
+  /**
+   * @method handleTwoFaLogin
+   * @async
+   * @param {IUser} user
+   * @param {Required<LoginDto>} data
+   * @returns {Promise<LoginResponse>}
+   */
   private async handleTwoFaLogin(user: IUser, data: Required<LoginDto>): Promise<LoginResponse> {
     // TODO: ADD DESCRIPTION
     this.userService.checkThatPasswordsMatch(data.password, user.password as string);
@@ -245,6 +266,11 @@ export class AuthService {
     return { user, token: AUTH_TOKEN, twoFaSetupCode } as LoginResponse;
   }
 
+  /**
+   * @method handlePasswordlessLogin
+   * @async
+   * @param {IUser} user
+   */
   private async handlePasswordlessLogin(user: IUser): Promise<void> {
     // TODO: ADD DESCRIPTION
     const AUTH_TOKEN_PAYLOAD = this.generateUserAuthTokenPayload(user);

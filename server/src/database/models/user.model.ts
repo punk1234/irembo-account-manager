@@ -30,6 +30,10 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    active: {
+      type: Boolean,
+      default: false,
+    },
     nationality: {
       type: String,
       required: true,
