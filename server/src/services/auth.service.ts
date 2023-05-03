@@ -27,8 +27,9 @@ import {
   RateLimitManager,
   TotpAuthenticator,
 } from "../helpers";
-import { PasswordResetService } from "./password-reset.service";
+import { UserTokenService } from "./user-token.service";
 import { SessionService } from "./session.service";
+import { VerifyAccountDto } from "../models/verify-account-dto";
 
 @Service()
 export class AuthService {
@@ -38,7 +39,7 @@ export class AuthService {
     @Inject() private readonly twoFaService: TwoFaService,
     @Inject() private readonly emailService: EmailService,
     @Inject() private readonly sessionService: SessionService,
-    @Inject() private readonly passwordResetService: PasswordResetService,
+    @Inject() private readonly userTokenService: UserTokenService,
   ) {}
 
   /**
@@ -108,7 +109,11 @@ export class AuthService {
     // console.debug("RESET_TOKEN", RESET_TOKEN.length, RESET_TOKEN);
     // console.debug("ENCODED_RESET_TOKEN", ENCODED_RESET_TOKEN);
 
-    await this.passwordResetService.saveToken(USER._id.toUUIDString(), RESET_TOKEN);
+    await this.userTokenService.saveToken(
+      USER._id.toUUIDString(),
+      RESET_TOKEN,
+      C.UserTokenType.RESET_PASSWORD,
+    );
     const RESET_LINK = `${config.WEB_APP_URL}?token=${encodeURIComponent(ENCODED_RESET_TOKEN)}`;
 
     // TODO: HANDLE EMAIL ERROR
@@ -126,12 +131,39 @@ export class AuthService {
    * @returns {Promise<void>}
    */
   async resetPassword(data: ResetPasswordDto): Promise<void> {
-    await this.passwordResetService.checkThatUserResetTokenIsValid(data.userId, data.token);
+    await this.userTokenService.checkThatUserTokenIsValid(
+      data.userId,
+      data.token,
+      C.UserTokenType.RESET_PASSWORD,
+    );
     await this.userService.updatePassword(data.userId, data.password);
 
     RateLimitManager.reset(data.userId, C.ApiRateLimiterType.RESET_PASSWORD).catch();
 
-    this.passwordResetService.deleteUserToken(data.userId).catch(Logger.error);
+    this.userTokenService
+      .deleteUserToken(data.userId, C.UserTokenType.RESET_PASSWORD)
+      .catch(Logger.error);
+  }
+
+  /**
+   * @method verifyAccount
+   * @async
+   * @param {VerifyAccountDto} data
+   * @returns {Promise<void>}
+   */
+  async verifyAccount(data: VerifyAccountDto): Promise<void> {
+    await this.userTokenService.checkThatUserTokenIsValid(
+      data.userId,
+      data.token,
+      C.UserTokenType.VERIFY_ACCOUNT,
+    );
+    await this.userService.markUserAsActive(data.userId);
+
+    RateLimitManager.reset(data.userId, C.ApiRateLimiterType.VERIFY_ACCOUNT).catch();
+
+    this.userTokenService
+      .deleteUserToken(data.userId, C.UserTokenType.VERIFY_ACCOUNT)
+      .catch(Logger.error);
   }
 
   /**

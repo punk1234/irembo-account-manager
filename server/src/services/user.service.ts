@@ -108,6 +108,16 @@ export class UserService {
   }
 
   /**
+   * @method markUserAsActive
+   * @async
+   * @param {string} userId
+   * @returns {Promise<void>}
+   */
+  async markUserAsActive(userId: string): Promise<void> {
+    await UserModel.updateOne({ _id: userId }, { active: true });
+  }
+
+  /**
    * @method getUsers
    * @instance
    * @param {Record<string, any>} filter

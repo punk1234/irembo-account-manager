@@ -1,11 +1,11 @@
 import { model, Schema } from "mongoose";
+import C from "../../constants";
 import { MongooseUuid } from "../mongoose-uuid.type";
-import { IPasswordResetToken } from "../types/password-reset-token.type";
+import { IUserToken } from "../types/user-token.type";
 
-const PasswordResetTokenSchema = new Schema(
+const UserTokenSchema = new Schema(
   {
-    _id: {
-      /** USER ID */
+    userId: {
       type: MongooseUuid,
       required: true,
     },
@@ -13,11 +13,18 @@ const PasswordResetTokenSchema = new Schema(
       type: String,
       required: true,
     },
+    type: {
+      type: String,
+      enum: Object.values(C.UserTokenType),
+    },
+    expiresAt: {
+      type: Date,
+      required: true,
+    },
     createdAt: {
       type: Date,
       required: true,
       default: Date.now,
-      expires: 120, // MOVE TO CONFIG
     },
   },
   {
@@ -33,4 +40,4 @@ const PasswordResetTokenSchema = new Schema(
   },
 );
 
-export default model<IPasswordResetToken>("password_reset_tokens", PasswordResetTokenSchema);
+export default model<IUserToken>("user_tokens", UserTokenSchema);

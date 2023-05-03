@@ -1,5 +1,6 @@
 import { Regex } from "./regex.const";
 import { Environment } from "./environment.const";
+import { UserTokenType } from "./user-token-type.const";
 import { AuthTokenType } from "./auth-token-type.const";
 import { HttpStatusCode } from "./http-status-code.const";
 import { ResponseMessage } from "./response-message.const";
@@ -12,4 +13,5 @@ export default {
   ResponseMessage,
   AuthTokenType,
   ApiRateLimiterType,
+  UserTokenType,
 };
