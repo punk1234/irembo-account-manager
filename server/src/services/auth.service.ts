@@ -7,7 +7,7 @@ import config from "../config";
 import { UserService } from "./user.service";
 import { TwoFaService } from "./two-fa.service";
 import { IUser } from "../database/types/user.type";
-import { IAuthTokenPayload } from "../interfaces";
+import { IAuthTokenPayload, IGeneratedUserToken } from "../interfaces";
 import { EmailService } from "./external/email.service";
 import {
   LoginDto,
@@ -56,12 +56,35 @@ export class AuthService {
       throw new BadRequestError("Invalid country!");
     }
 
-    await this.userService.checkThatUserWithEmailDoesNotExist(data.email);
+    try {
+      await this.userService.checkThatUserWithEmailDoesNotExist(data.email);
+    } catch (err) {
+      return;
+    }
+
+    let user!: IUser;
 
     await DbTransactionHelper.execute(async (dbSession?: ClientSession) => {
-      const USER = await this.userService.createUser(data, dbSession);
-      await this.twoFaService.create(USER._id.toUUIDString(), dbSession);
+      user = await this.userService.createUser(data, dbSession);
+      await this.twoFaService.create(user._id.toUUIDString(), dbSession);
     });
+
+    const TOKEN = this.generateToken(user._id.toUUIDString());
+    const VERIFICATION_LINK = `${config.WEB_APP_URL}/account/verify?token=${encodeURIComponent(
+      TOKEN.encoded,
+    )}`;
+
+    await this.userTokenService.saveToken(
+      user._id.toUUIDString(),
+      TOKEN.value,
+      C.UserTokenType.VERIFY_ACCOUNT,
+    );
+
+    this.emailService.sendWelcomeAndActivationMsg(
+      user.email,
+      VERIFICATION_LINK,
+      user.firstName || user.lastName,
+    );
   }
 
   /**
@@ -74,6 +97,13 @@ export class AuthService {
     data.email = data.email.toLowerCase();
 
     const USER = await this.checkThatUserExistByEmailForLogin(data.email);
+
+    if (!USER.active) {
+      // User account is not confirmed, or has been de-activated!
+      throw new UnauthenticatedError(C.ResponseMessage.ERR_INVALID_CREDENTIALS);
+      // SEND VERIFY-ACCOUNT EMAIL
+    }
+
     let response: LoginResponse = { isPasswordless: true };
 
     if (data.password) {
@@ -99,22 +129,17 @@ export class AuthService {
       return;
     }
 
-    const RESET_TOKEN = crypto.randomBytes(30).toString("base64");
-
-    /** TOTAL OF (36+1+40+1=78%3=0), SO THERE'S NO PADDING OF `=` or `==` AT THE END */
-    const ENCODED_RESET_TOKEN =
-      crypto.randomBytes(6).toString("base64") + // RANDOM UNUSED TOKEN (8 chars)
-      Buffer.from(`${USER._id.toUUIDString()}@${RESET_TOKEN}I`).toString("base64");
-
-    // console.debug("RESET_TOKEN", RESET_TOKEN.length, RESET_TOKEN);
-    // console.debug("ENCODED_RESET_TOKEN", ENCODED_RESET_TOKEN);
+    const TOKEN = this.generateToken(USER._id.toUUIDString());
 
     await this.userTokenService.saveToken(
       USER._id.toUUIDString(),
-      RESET_TOKEN,
+      TOKEN.value,
       C.UserTokenType.RESET_PASSWORD,
     );
-    const RESET_LINK = `${config.WEB_APP_URL}?token=${encodeURIComponent(ENCODED_RESET_TOKEN)}`;
+
+    const RESET_LINK = `${config.WEB_APP_URL}/account/pwd-reset?token=${encodeURIComponent(
+      TOKEN.encoded,
+    )}`;
 
     // TODO: HANDLE EMAIL ERROR
     this.emailService.sendPasswordResetLink(
@@ -122,6 +147,30 @@ export class AuthService {
       RESET_LINK,
       USER.firstName || USER.lastName,
     );
+  }
+
+  /**
+   * @method generateToken
+   * @instance
+   * @param {string} userId
+   * @returns {IGeneratedUserToken}
+   */
+  // TODO: MOVE THIS TO TOKEN-SERVICE
+  private generateToken(userId: string): IGeneratedUserToken {
+    const TOKEN = crypto.randomBytes(30).toString("base64");
+
+    /** NOTE: TOTAL OF (36+1+40+1=78%3=0), SO THERE'S NO PADDING OF `=` or `==` AT THE END */
+    const ENCODED_TOKEN =
+      crypto.randomBytes(6).toString("base64") + // RANDOM UNUSED TOKEN (8 chars)
+      Buffer.from(`${userId}@${TOKEN}I`).toString("base64");
+
+    console.debug("TOKEN", TOKEN.length, TOKEN);
+    console.debug("ENCODED_TOKEN", ENCODED_TOKEN);
+
+    return {
+      value: TOKEN,
+      encoded: ENCODED_TOKEN,
+    };
   }
 
   /**
@@ -136,6 +185,7 @@ export class AuthService {
       data.token,
       C.UserTokenType.RESET_PASSWORD,
     );
+
     await this.userService.updatePassword(data.userId, data.password);
 
     RateLimitManager.reset(data.userId, C.ApiRateLimiterType.RESET_PASSWORD).catch();
@@ -157,6 +207,7 @@ export class AuthService {
       data.token,
       C.UserTokenType.VERIFY_ACCOUNT,
     );
+
     await this.userService.markUserAsActive(data.userId);
 
     RateLimitManager.reset(data.userId, C.ApiRateLimiterType.VERIFY_ACCOUNT).catch();
@@ -188,6 +239,13 @@ export class AuthService {
     return { user: USER.toJSON(), token: AUTH_TOKEN };
   }
 
+  /**
+   * @method handleTwoFaLogin
+   * @async
+   * @param {IUser} user
+   * @param {Required<LoginDto>} data
+   * @returns {Promise<LoginResponse>}
+   */
   private async handleTwoFaLogin(user: IUser, data: Required<LoginDto>): Promise<LoginResponse> {
     // TODO: ADD DESCRIPTION
     this.userService.checkThatPasswordsMatch(data.password, user.password as string);
@@ -208,6 +266,11 @@ export class AuthService {
     return { user, token: AUTH_TOKEN, twoFaSetupCode } as LoginResponse;
   }
 
+  /**
+   * @method handlePasswordlessLogin
+   * @async
+   * @param {IUser} user
+   */
   private async handlePasswordlessLogin(user: IUser): Promise<void> {
     // TODO: ADD DESCRIPTION
     const AUTH_TOKEN_PAYLOAD = this.generateUserAuthTokenPayload(user);
@@ -219,7 +282,7 @@ export class AuthService {
       authToken.substring(authToken.length - 10);
 
     console.debug(authToken); // TODO: TO BE REMOVED
-    const LOGIN_LINK = `${config.WEB_APP_URL}?code=${authToken}`;
+    const LOGIN_LINK = `${config.WEB_APP_URL}/auth/passwordless?code=${authToken}`;
 
     RateLimitManager.reset(user.email, C.ApiRateLimiterType.AUTH_LOGIN).catch();
     await this.sessionService.registerSession(user._id.toString(), AUTH_TOKEN_PAYLOAD.sessionId);

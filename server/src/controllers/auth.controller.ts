@@ -31,7 +31,7 @@ export class AuthController {
   async register(req: Request, res: Response) {
     await this.authService.register(req.body as RegisterUserDto);
 
-    ResponseHandler.created(res, { success: true });
+    ResponseHandler.created(res, { success: true, message: "Check your mail to activate account" });
   }
 
   /**
