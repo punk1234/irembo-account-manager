@@ -42,6 +42,12 @@ export interface User {
      * @type {boolean}
      * @memberof User
      */
+    active?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof User
+     */
     verified: boolean;
     /**
      * User's country code (alpha2-code)
