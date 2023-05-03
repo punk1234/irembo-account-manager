@@ -11,6 +11,7 @@ import {
 } from "../models";
 import { AuthService } from "../services/auth.service";
 import { SessionService } from "../services/session.service";
+import { VerifyAccountDto } from "../models/verify-account-dto";
 
 @Service()
 @Controller()
@@ -92,6 +93,18 @@ export class AuthController {
    */
   async resetPassword(req: Request, res: Response) {
     await this.authService.resetPassword(req.body as ResetPasswordDto);
+
+    ResponseHandler.ok(res, { success: true });
+  }
+
+  /**
+   * @method resetPassword
+   * @async
+   * @param {Request} req
+   * @param {Response} res
+   */
+  async verifyAccount(req: Request, res: Response) {
+    await this.authService.verifyAccount(req.body as VerifyAccountDto);
 
     ResponseHandler.ok(res, { success: true });
   }

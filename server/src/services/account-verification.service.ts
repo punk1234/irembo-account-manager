@@ -1,13 +1,13 @@
 import { Inject, Service } from "typedi";
-import { InitiateAccountVerificationDto, VerificationStatus } from "../models";
-import AccountVerificationModel from "../database/models/account-verification.model";
 import { FileManager } from "./external/file-manager.service";
 import { IFileUploadData, IPaginatedData } from "../interfaces";
-import { UserService } from "./user.service";
 import config from "../config";
+import { UserService } from "./user.service";
+import { getPaginationSummary } from "../helpers";
 import { IAccountVerification } from "../database/types/account-verification.type";
 import { BadRequestError, ConflictError, NotFoundError } from "../exceptions";
-import { getPaginationSummary } from "../helpers";
+import { InitiateAccountVerificationDto, VerificationStatus } from "../models";
+import AccountVerificationModel from "../database/models/account-verification.model";
 
 @Service()
 export class AccountVerificationService {

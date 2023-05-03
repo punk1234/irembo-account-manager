@@ -20,6 +20,12 @@ router.post(
 );
 
 router.post(
+  "/account/verify",
+  useRateLimit(C.ApiRateLimiterType.VERIFY_ACCOUNT),
+  controller.verifyAccount,
+);
+
+router.post(
   "/password/reset/send-link",
   useRateLimit(C.ApiRateLimiterType.GENERATE_RESET_TOKEN),
   controller.sendPasswordResetLink,
