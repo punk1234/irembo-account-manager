@@ -25,7 +25,7 @@ export const useRateLimit = (rateLimiterType: ApiRateLimiterType) => {
         // NOTE: USE `userId` WHEN MORE FUNCTIONALITIES ARE SUPPORTED.
         // ALSO, MAYBE SUPPORT `IP-ADDRESS` FOR UNIQUE-KEY
         key: (req: Request) =>
-          getRedisKey(req.auth?.userId || req.body.email.toLowerCase() || req.body.userId),
+          getRedisKey(req.auth?.userId || req.body.email?.toLowerCase() || req.body.userId),
         ...RATE_LIMIT_CONFIG,
       };
 

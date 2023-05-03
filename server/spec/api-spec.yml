@@ -423,8 +423,8 @@ components:
           description: "User's email"
         password:
           type: "string"
-          minLength: 4
-          # SHOULD HAVE `pattern` INSTEAD
+          format: "password"
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%^*?&-])[A-Za-z\d@$#!%^*?&-]{8,20}$'
         countryCode:
           type: "string"
           minLength: 2
@@ -454,8 +454,8 @@ components:
           description: "User's email"
         password:
           type: string
-          minLength: 4
-          # SHOULD HAVE `pattern` INSTEAD
+          format: "password"
+          minLength: 6
           description: "User's password (if not provided, then login will use passwordless strategy where a login-link is sent to user's email)"
 
     VerifyTwoFaDto:
@@ -487,9 +487,9 @@ components:
           minLength: 20
           description: "Password reset-token to reset password"
         password:
-          type: string
-          minLength: 4
-          # SHOULD HAVE `pattern` INSTEAD
+          type: "string"
+          format: "password"
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%^*?&-])[A-Za-z\d@$#!%^*?&-]{8,20}$'
           description: "User's new password"
 
     SendPasswordResetLinkDto:
@@ -581,7 +581,8 @@ components:
           description: "Current password"
         newPassword:
           type: "string"
-          minLength: 4
+          format: "password"
+          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$#!%^*?&-])[A-Za-z\d@$#!%^*?&-]{8,20}$'
           description: "New password"
 
     # RESPONSE OBJECT DEFINITIONS

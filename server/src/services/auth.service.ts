@@ -153,7 +153,6 @@ export class AuthService {
     await this.sessionService.registerSession(userId, AUTH_TOKEN_PAYLOAD.sessionId);
 
     Logger.info(`User <${userId}> logged in successfully. Session=${AUTH_TOKEN_PAYLOAD.sessionId}`);
-
     return { user: USER.toJSON(), token: AUTH_TOKEN };
   }
 
@@ -174,7 +173,6 @@ export class AuthService {
       (await QrCode.toDataURL(TotpAuthenticator.getQrCode(TWO_FA_SECRET, data.email)));
 
     RateLimitManager.reset(user.email, C.ApiRateLimiterType.AUTH_LOGIN).catch();
-
     return { user, token: AUTH_TOKEN, twoFaSetupCode } as LoginResponse;
   }
 
