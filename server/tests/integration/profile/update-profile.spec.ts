@@ -70,39 +70,39 @@ describe("PATCH /me/profile", () => {
     expect(res.body).toHaveProperty("maritalStatus", "SINGLE");
   });
 
-//   it("[200] - Update my-profile without photo", async () => {
-//     const res = await request(app)
-//       .patch("/me/profile")
-//       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
-//       .field("lastName", "last")
-//       .field("gender", "MALE")
-//       .expect(C.HttpStatusCode.SUCCESS);
+  //   it("[200] - Update my-profile without photo", async () => {
+  //     const res = await request(app)
+  //       .patch("/me/profile")
+  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
+  //       .field("lastName", "last")
+  //       .field("gender", "MALE")
+  //       .expect(C.HttpStatusCode.SUCCESS);
 
-//     expect(res.body).toHaveProperty("lastName", "last");
-//     expect(res.body).toHaveProperty("gender", "MALE");
-//   });
+  //     expect(res.body).toHaveProperty("lastName", "last");
+  //     expect(res.body).toHaveProperty("gender", "MALE");
+  //   });
 
-//   it("[400] - Update my-profile with empty request data", async () => {
-//     const res = await request(app)
-//       .patch("/me/profile")
-//       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
-//       .send()
-//       .expect(C.HttpStatusCode.BAD_REQUEST);
-//   });
+  //   it("[400] - Update my-profile with empty request data", async () => {
+  //     const res = await request(app)
+  //       .patch("/me/profile")
+  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
+  //       .send()
+  //       .expect(C.HttpStatusCode.BAD_REQUEST);
+  //   });
 
-//   it("[400] - Update my-profile with disallowed fields", async () => {
-//     const res = await request(app)
-//       .patch("/me/profile")
-//       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
-//       .field("active", true)
-//       .field("verified", true)
-//       .field("isAdmin", true)
-//       .expect(C.HttpStatusCode.BAD_REQUEST);
+  //   it("[400] - Update my-profile with disallowed fields", async () => {
+  //     const res = await request(app)
+  //       .patch("/me/profile")
+  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
+  //       .field("active", true)
+  //       .field("verified", true)
+  //       .field("isAdmin", true)
+  //       .expect(C.HttpStatusCode.BAD_REQUEST);
 
-//     expect(res.body).toHaveProperty("message");
-//     expect(res.body.data.errors).toHaveLength(3);
-//     expect(res.body.data.errors[0].path).toEqual("/body/active");
-//     expect(res.body.data.errors[1].path).toEqual("/body/verified");
-//     expect(res.body.data.errors[2].path).toEqual("/body/isAdmin");
-//   });
+  //     expect(res.body).toHaveProperty("message");
+  //     expect(res.body.data.errors).toHaveLength(3);
+  //     expect(res.body.data.errors[0].path).toEqual("/body/active");
+  //     expect(res.body.data.errors[1].path).toEqual("/body/verified");
+  //     expect(res.body.data.errors[2].path).toEqual("/body/isAdmin");
+  //   });
 });

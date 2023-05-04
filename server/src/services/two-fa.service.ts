@@ -32,6 +32,7 @@ export class TwoFaService {
 
   async verify(userId: string, twoFaCode: string): Promise<IUserTwoFa> {
     const twoFaSecret: IUserTwoFa = await this.checkThatUserTwoFaSecretExist(userId);
+    console.log("@verify-twoFaSecret", twoFaSecret);
     const decryptedSecret: string = CryptoHandler.decrypt({
       content: twoFaSecret.secret,
       iv: twoFaSecret.iv,
@@ -55,7 +56,7 @@ export class TwoFaService {
    * @returns {Promise<IUserTwoFa>}
    */
   private async checkThatUserTwoFaSecretExist(userId: string): Promise<IUserTwoFa> {
-    const foundUserTwoFa = await UserTwoFaModel.findOne({ userId });
+    const foundUserTwoFa = await UserTwoFaModel.findOne({ _id: userId });
     if (!foundUserTwoFa) {
       throw new NotFoundError("User 2FA secret does not exist");
     }

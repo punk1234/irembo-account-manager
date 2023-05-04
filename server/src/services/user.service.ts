@@ -9,11 +9,16 @@ import { CountryManager, PasswordHasher, RateLimitManager } from "../helpers";
 import { FileManager } from "./external/file-manager.service";
 import { ChangePasswordDto, RegisterUserDto, UpdateProfileDto, User } from "../models";
 import { BadRequestError, ConflictError, NotFoundError, UnauthenticatedError } from "../exceptions";
+import { SessionService } from "./session.service";
 
 @Service()
 export class UserService {
   // eslint-disable-next-line no-useless-constructor
-  constructor(@Inject() private readonly fileManager: FileManager) {}
+  constructor(
+    @Inject() private readonly fileManager: FileManager,
+    @Inject() private readonly sessionService: SessionService,
+  ) {}
+
   /**
    * @method createUser
    * @async
@@ -86,8 +91,8 @@ export class UserService {
 
     RateLimitManager.reset(userId, C.ApiRateLimiterType.CHANGE_PASSWORD).catch();
 
-    // TODO: DESTROY SESSION AUTH-TOKEN IN CACHE
     USER.password = PasswordHasher.hash(data.newPassword);
+    await this.sessionService.invalidateSession(userId);
 
     return USER.save();
   }
