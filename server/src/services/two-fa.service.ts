@@ -32,7 +32,6 @@ export class TwoFaService {
 
   async verify(userId: string, twoFaCode: string): Promise<IUserTwoFa> {
     const twoFaSecret: IUserTwoFa = await this.checkThatUserTwoFaSecretExist(userId);
-    console.log("@verify-twoFaSecret", twoFaSecret);
     const decryptedSecret: string = CryptoHandler.decrypt({
       content: twoFaSecret.secret,
       iv: twoFaSecret.iv,
