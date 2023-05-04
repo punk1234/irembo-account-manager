@@ -2,12 +2,12 @@ import { Inject, Service } from "typedi";
 import { ClientSession } from "mongoose";
 import C from "../constants";
 import config from "../config";
-import { IFileUploadData, IPaginatedData } from "../interfaces";
+import { IFileUploadData, IPaginatedData, IRegisterUserDto } from "../interfaces";
 import { IUser } from "../database/types/user.type";
 import UserModel from "../database/models/user.model";
 import { CountryManager, PasswordHasher, RateLimitManager } from "../helpers";
 import { FileManager } from "./external/file-manager.service";
-import { ChangePasswordDto, RegisterUserDto, UpdateProfileDto, User } from "../models";
+import { ChangePasswordDto, UpdateProfileDto, User } from "../models";
 import { BadRequestError, ConflictError, NotFoundError, UnauthenticatedError } from "../exceptions";
 import { SessionService } from "./session.service";
 
@@ -26,7 +26,7 @@ export class UserService {
    * @param {ClientSession} dbSession
    * @returns {Promise<IUser>}
    */
-  async createUser(data: RegisterUserDto, dbSession?: ClientSession): Promise<IUser> {
+  async createUser(data: IRegisterUserDto, dbSession?: ClientSession): Promise<IUser> {
     const PASSWORD_HASH: string = PasswordHasher.hash(data.password);
 
     const USER = new UserModel({ ...data, password: PASSWORD_HASH, nationality: data.countryCode });
@@ -116,10 +116,11 @@ export class UserService {
    * @method markUserAsActive
    * @async
    * @param {string} userId
+   * @param {ClientSession} dbSession
    * @returns {Promise<void>}
    */
-  async markUserAsActive(userId: string): Promise<void> {
-    await UserModel.updateOne({ _id: userId }, { active: true });
+  async markUserAsActive(userId: string, dbSession?: ClientSession): Promise<void> {
+    await UserModel.updateOne({ _id: userId }, { active: true }, { session: dbSession });
   }
 
   /**
