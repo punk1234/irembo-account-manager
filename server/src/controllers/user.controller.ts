@@ -34,7 +34,7 @@ export class UserController {
     let uploadData;
 
     const photoFile = (req.files as Express.Multer.File[])[0];
-    req.files && (uploadData = FileHelper.toUploadData([photoFile]));
+    photoFile && (uploadData = FileHelper.toUploadData([photoFile]));
 
     const USER = await this.userService.updateProfile(
       req.auth?.userId as string,

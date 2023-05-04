@@ -23,7 +23,7 @@ router.post(
 router.post(
   "/account/verification",
   requireAuth({ forAdmin: false }),
-  imageMimeTypeValidator("images"),
+  imageMimeTypeValidator("images", true),
   verificationController.initiateAccountVerification,
 );
 
