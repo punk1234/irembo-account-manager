@@ -12,3 +12,4 @@ export { IAuthTokenPayload } from "./auth-token-payload.interface";
 export { IDatabaseConnector } from "./database-connector.interface";
 export { IVerifyAuthOptions } from "./verify-auth-options.interface";
 export { IGeneratedUserToken } from "./generated-user-token.interface";
+export { IRegisterUserDto } from "./register-user-dto.interface";

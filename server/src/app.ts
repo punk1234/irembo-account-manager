@@ -22,6 +22,7 @@ import MongoDbConnector from "./database/connectors/mongodb.connector";
 (Schema.Types as any).UUID = MongooseUuid;
 
 import RouteManager from "./routes";
+import { runDbSeeders } from "./database/seeders";
 
 /**
  * @class App
@@ -64,6 +65,8 @@ export default class App {
       this.mongoConnector.connect(config.MONGODB_URL),
       this.redisConnector.connect(config.REDIS_URL),
     ]);
+
+    await runDbSeeders();
   }
 
   /**

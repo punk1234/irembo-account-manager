@@ -36,4 +36,7 @@ export default {
   PROFILE_PHOTO_BUCKET: "profile-photos",
 
   API_RATE_LIMITING: apiRateLimitingConfig,
+
+  SUPER_ADMIN_EMAIL: env.SUPER_ADMIN_EMAIL,
+  SUPER_ADMIN_PASSWORD: env.SUPER_ADMIN_PASSWORD,
 };
