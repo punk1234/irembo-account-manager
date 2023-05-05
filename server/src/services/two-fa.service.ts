@@ -20,7 +20,6 @@ export class TwoFaService {
     const plainSecret: string = TotpAuthenticator.getSecret();
     const encryptData: ICryptoData = CryptoHandler.encrypt(plainSecret);
 
-    // console.debug(plainSecret);
     const twoFa = new UserTwoFaModel({
       _id: userId,
       secret: encryptData.content,
@@ -77,18 +76,6 @@ export class TwoFaService {
     userTwoFa.verifiedAt = new Date();
     await userTwoFa.save();
   }
-
-  //   /**
-  //    * @name hasTwoFaBeenSetup
-  //    * @async
-  //    * @param {string} userId
-  //    * @returns {Promise<boolean>}
-  //    */
-  //   async hasTwoFaBeenSetup(userId: string): Promise<boolean> {
-  //     const twoFa = await UserTwoFaModel.findOne({ _id: userId });
-
-  //     return !!twoFa?.verifiedAt;
-  //   }
 
   /**
    * @name getTwoFaSecretIfNotSetup
