@@ -21,6 +21,12 @@ User Account Management
 ## SYSTEM DESIGN
 ![API-SPEC DISPLAY](./server/docs/images/system-design.png)
 
+## UI DISPLAY
+![API-SPEC DISPLAY](./server/docs/images/irembo-ui-display-1.jpeg)
+![API-SPEC DISPLAY](./server/docs/images/irembo-ui-display-2.jpeg)
+![API-SPEC DISPLAY](./server/docs/images/irembo-ui-display-3.jpeg)
+![API-SPEC DISPLAY](./server/docs/images/irembo-ui-display-4.jpeg)
+
 ## HOW TO RUN THE BACK-END APP 
 - Clone github repository
 - Install NPM dependencies using `npm install`
