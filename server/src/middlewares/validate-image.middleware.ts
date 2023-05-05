@@ -9,7 +9,7 @@ import { BadRequestError } from "../exceptions";
  * @description
  * This is a validation middleware that validates all image requests
  */
-export default (field: string, required: boolean = true) =>
+export default (field: string, required: boolean = false) =>
   (req: Request, res: Response, next: NextFunction) => {
     const files: any = req.files;
     let fileType: any;

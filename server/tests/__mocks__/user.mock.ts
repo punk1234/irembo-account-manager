@@ -10,6 +10,21 @@ export class UserMock {
     };
   }
 
+  static getValidUserUpdateData() {
+    return {
+      countryCode: "NG",
+      firstName: "Fat",
+      lastName: "Eye",
+      gender: "MALE",
+      dateOfBirth: "2001-01-01",
+      maritalStatus: "SINGLE",
+    };
+  }
+
+  static getProfileImageUrl() {
+    return "http://res.cloudinary.com/dqaowgncy/image/upload/v1683201774/profile-photos/cb8c1893ccf749098844109474c45bea.png";
+  }
+
   private static getValidAdminToCreate() {
     return {
       email: "admin-email@email.com",

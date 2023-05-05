@@ -19,7 +19,7 @@ let app: Application;
 let user: IUser, userLoginInfo: LoginResponse;
 let twoFaSecret: string, authToken: string;
 
-describe("POST /auth/logout", () => {
+describe("GET /me/profile", () => {
   beforeAll(async () => {
     app = await AppFactory.create();
 
@@ -44,32 +44,28 @@ describe("POST /auth/logout", () => {
     await AppFactory.destroy();
   });
 
-  it("[200] - User with auth-token can logout successfully & not access auth endpoints with token", async () => {
-    let res = await request(app)
-      .post("/auth/logout")
+  it("[200] - Get user-profile with valid auth-token", async () => {
+    const res = await request(app)
+      .get("/me/profile")
       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
       .expect(C.HttpStatusCode.SUCCESS);
 
-    expect(res.body).toHaveProperty("success", true);
-
-    res = await request(app)
-      .post("/auth/logout")
-      .set({ authorization: `Bearer ${userLoginInfo.token}`, "Content-Type": "application/json" })
-      .expect(C.HttpStatusCode.UNAUTHENTICATED);
-
-    expect(res.body).toHaveProperty("message", C.ResponseMessage.ERR_UNAUTHENTICATED);
+    expect(res.body).toHaveProperty("active", true);
+    expect(res.body).toHaveProperty("email");
+    expect(res.body).toHaveProperty("nationality");
+    expect(res.body).toHaveProperty("verified", false);
   });
 
-  // it("[401] - Logging out without token fails", async () => {
-  //   const res = await request(app).post("/auth/logout").expect(C.HttpStatusCode.UNAUTHENTICATED);
+  //   it("[401] - Get user-profile with missing auth-token", async () => {
+  //     let res = await request(app)
+  //       .get("/me/profile")
+  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
+  //   });
 
-  //   expect(res.body).toHaveProperty("message", "Invalid token!");
-  // });
-
-  // it("[401] - Logging out with invalid token fails", async () => {
-  //   await request(app)
-  //     .post("/auth/logout")
-  //     .set({ authorization: `Bearer INVALID_TOKEN`, "Content-Type": "application/json" })
-  //     .expect(C.HttpStatusCode.UNAUTHENTICATED);
-  // });
+  //   it("[401] - Get user-profile with invalid auth-token", async () => {
+  //     let res = await request(app)
+  //       .get("/me/profile")
+  //       .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
+  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
+  //   });
 });
