@@ -58,8 +58,24 @@ export const FormBottom = styled(Link)`
   font-size: 1rem;
 `;
 
-export const QRCodeWrapper =  styled.div`
+export const QRCodeWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 20px;
-`
+`;
+export const Buttons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+
+  button {
+    flex: 1;
+  }
+
+  button:nth-child(1) {
+    background: transparent;
+    color: #000;
+    border: 1px solid #000;
+  }
+`;

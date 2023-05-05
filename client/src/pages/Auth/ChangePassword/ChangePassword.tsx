@@ -1,16 +1,16 @@
 import { Button, Input } from "../../../components";
 import {
-    AuthForm,
-    AuthWrapper,
-    AuthWrapperContainer,
-    FormTitle,
-  } from "../Auth.styles";
+  AuthForm,
+  AuthWrapper,
+  AuthWrapperContainer,
+  FormTitle,
+} from "../Auth.styles";
 
 export const ChangePassword = () => {
   const labelBgColor = "var(--white)";
 
   return (
-   <AuthWrapper>
+    <AuthWrapper>
       <AuthWrapperContainer>
         <FormTitle>Change Password</FormTitle>
         <AuthForm>
@@ -30,5 +30,5 @@ export const ChangePassword = () => {
         </AuthForm>
       </AuthWrapperContainer>
     </AuthWrapper>
-  )
-}
+  );
+};

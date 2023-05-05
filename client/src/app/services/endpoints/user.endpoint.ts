@@ -5,8 +5,27 @@ const extendedUserApi = api.injectEndpoints({
     getUsers: build.query({
       query: () => "users",
     }),
+    getUser: build.query({
+      query: () => "me/profile",
+    }),
+    updateUser: build.mutation({
+      query: (initialPost: {
+        firstName: string;
+        lastName: string;
+        nationality: string;
+        photo: string;
+        gender: string;
+        dateOfBirth: Date;
+        maritalStatus: string;
+      }) => ({
+        url: "me/profile",
+        method: "PATCH",
+        body: initialPost,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetUsersQuery } = extendedUserApi;
+export const { useGetUsersQuery, useGetUserQuery, useUpdateUserMutation } =
+  extendedUserApi;

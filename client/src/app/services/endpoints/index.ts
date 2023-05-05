@@ -1,2 +1,2 @@
 export { useCreateUserMutation, useUserLoginMutation } from "./auth.endpoint";
-export { useGetUsersQuery } from "./user.endpoint";
+export { useGetUsersQuery, useGetUserQuery } from "./user.endpoint";

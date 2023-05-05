@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 interface IButtonWrapper {
-  bg: string;
-  margin: string;
+  bg?: string;
+  margin?: string;
   hoverBg: string;
 }
 

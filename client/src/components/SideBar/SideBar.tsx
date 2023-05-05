@@ -1,6 +1,9 @@
+import { NavigationContext } from "@/app/context/Navigation";
+import { logout } from "@/app/services/features/auth.slice";
+import { useAppDispatch } from "@/app/services/hook";
 import { Icon, MaybeElement } from "@blueprintjs/core";
 import { BlueprintIcons_16Id } from "@blueprintjs/icons/lib/esm/generated-icons/16px/blueprint-icons-16";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import config from "../../config";
 import {
   SideBarWrapper,
@@ -11,7 +14,7 @@ import {
   Nav,
   NavItems,
   NavItem,
-  SideBarNavLink
+  SideBarNavLink,
 } from "./SideBar.styles";
 
 interface INavItemComponent {
@@ -19,6 +22,7 @@ interface INavItemComponent {
   text: string;
   icon: BlueprintIcons_16Id | MaybeElement;
   to: string;
+  isForAdmin?: boolean;
 }
 
 const NavItemComponent = ({
@@ -26,7 +30,16 @@ const NavItemComponent = ({
   text,
   icon,
   to,
+  isForAdmin,
 }: INavItemComponent) => {
+  const { isAdmin } = useContext(NavigationContext);
+
+  const ifAdmin = isForAdmin ? isAdmin : !isAdmin;
+
+  if (!ifAdmin) {
+    return <></>;
+  }
+
   return (
     <NavItem>
       <SideBarNavLink
@@ -44,6 +57,11 @@ const NavItemComponent = ({
 export const SideBar = () => {
   const [sideBarDesktop, setSideBarDesktop] = useState(false);
 
+  const dispatch = useAppDispatch();
+
+  const onLogout = () => {
+    dispatch(logout({}));
+  };
   return (
     <SideBarWrapper data-desktop={sideBarDesktop}>
       <SideBarContainer>
@@ -69,10 +87,12 @@ export const SideBar = () => {
             />
             <NavItemComponent
               isSideBarDesktop={sideBarDesktop}
-              icon="grid-view"
+              icon="people"
               text="Users"
               to="users"
+              // isForAdmin
             />
+
             <NavItemComponent
               isSideBarDesktop={sideBarDesktop}
               icon="changes"
@@ -82,7 +102,7 @@ export const SideBar = () => {
           </NavItems>
         </Nav>
       </SideBarContainer>
-      <Icon size={18} icon="power" />    
+      <Icon size={18} icon="power" onClick={onLogout} />
     </SideBarWrapper>
   );
 };

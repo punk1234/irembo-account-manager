@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { InputHTMLAttributes, useState } from "react";
 import { Icon as BlueIcon } from "@blueprintjs/core";
 import {
   InputField,
@@ -8,35 +8,47 @@ import {
   InputError,
 } from "./Input.styles";
 
-interface IInput {
+interface IInput extends Omit<InputHTMLAttributes<HTMLInputElement>, "value"> {
   placeholder?: string;
-  type: "text" | "number" | "email" | "password";
-  inputValue?: string;
   name?: string;
   labelbg?: string;
   color?: string;
   isError?: boolean;
   error_text?: string;
+  value?: File | number | string | null;
+}
+
+export interface InputProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "value"> {
+  label?: string;
+  placeholder?: string;
+  required?: boolean;
+  name: string;
+  icon?: string;
+  value?: File | number | string | null;
+  selectedFile?: File | null;
+  isError?: boolean;
+  error_text?: string;
+  labelbg?: string;
 }
 
 export const Input = ({
   placeholder,
   type,
-  inputValue,
-  name,
   labelbg,
   color = "var(--faint-black)",
   isError = false,
   error_text = "Error",
+  value,
+  ...rest
 }: IInput) => {
-  const [value, setValue] = useState<string | number>();
   const [inputFocus, setInputFocus] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
     <CustomInput>
       <InputWrapper>
-        {(inputFocus || value) && (
+        {inputFocus && (
           <InputLabel labelbg={labelbg} data-focus={inputFocus}>
             {placeholder}
           </InputLabel>
@@ -46,13 +58,11 @@ export const Input = ({
           autoComplete="off"
           type={showPassword ? "text" : type}
           placeholder={placeholder}
-          value={value || inputValue}
-          name={name}
-          onChange={(e) => setValue(e.target.value)}
           data-type={type}
           onFocus={() => setInputFocus(true)}
           onBlur={() => setInputFocus(false)}
           color={color}
+          {...rest}
         />
 
         {type === "password" && (

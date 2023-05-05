@@ -7,7 +7,6 @@
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   box-sizing: border-box;
-  /* color-scheme: light dark; */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -36,10 +35,7 @@ body {
   margin: 0;
   padding: 0;
   background-color: var(--primary-bg);
-  /* max-height: 100%; */
-  /* max-height: 100vh; */
-
-  overflow: hidden;
+  max-height: 100%;
 }
 
 p,
