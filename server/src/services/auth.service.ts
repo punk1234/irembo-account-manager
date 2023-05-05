@@ -289,10 +289,10 @@ export class AuthService {
     const LOGIN_LINK = `${config.WEB_APP_URL}/auth/passwordless?code=${authToken}`;
 
     RateLimitManager.reset(user.email, C.ApiRateLimiterType.AUTH_LOGIN).catch();
-    await this.sessionService.registerSession(user._id.toString(), AUTH_TOKEN_PAYLOAD.sessionId);
+    await this.sessionService.registerSession(user._id.toUUIDString(), AUTH_TOKEN_PAYLOAD.sessionId);
 
     Logger.info(
-      `User <${user._id.toString()}> logged in successfully. Session=${
+      `User <${user._id.toUUIDString()}> logged in successfully. Session=${
         AUTH_TOKEN_PAYLOAD.sessionId
       }`,
     );
