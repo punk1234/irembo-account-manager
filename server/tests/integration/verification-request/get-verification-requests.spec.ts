@@ -96,25 +96,25 @@ describe("PUT /me/account/verification/status", () => {
     expect(res.body).toHaveProperty("limit", 10);
   });
 
-  //   it("[400] - Update verification status with invalid query-param", async () => {
-  //     const res = await request(app)
-  //       .get(`/users/verification-requests?status=UNKNOWN`)
-  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
-  //       .send({})
-  //       .expect(C.HttpStatusCode.BAD_REQUEST);
-  //   });
+    it("[400] - Update verification status with invalid query-param", async () => {
+      const res = await request(app)
+        .get(`/users/verification-requests?status=UNKNOWN`)
+        .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
+        .send({})
+        .expect(C.HttpStatusCode.BAD_REQUEST);
+    });
 
-  //   it("[401] - Update verification status with invalid auth-token", async () => {
-  //     const res = await request(app)
-  //       .get(`/users/verification-requests`)
-  //       .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
-  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
-  //   });
+    it("[401] - Update verification status with invalid auth-token", async () => {
+      const res = await request(app)
+        .get(`/users/verification-requests`)
+        .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
+        .expect(C.HttpStatusCode.UNAUTHENTICATED);
+    });
 
-  //   it("[403] - Get verification requests with non-admin auth-token", async () => {
-  //     const res = await request(app)
-  //       .get(`/users/verification-requests`)
-  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
-  //       .expect(C.HttpStatusCode.UNAUTHORIZED);
-  //   });
+    it("[403] - Get verification requests with non-admin auth-token", async () => {
+      const res = await request(app)
+        .get(`/users/verification-requests`)
+        .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
+        .expect(C.HttpStatusCode.UNAUTHORIZED);
+    });
 });

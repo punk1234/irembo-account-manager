@@ -56,16 +56,16 @@ describe("GET /me/profile", () => {
     expect(res.body).toHaveProperty("verified", false);
   });
 
-  //   it("[401] - Get user-profile with missing auth-token", async () => {
-  //     let res = await request(app)
-  //       .get("/me/profile")
-  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
-  //   });
+    it("[401] - Get user-profile with missing auth-token", async () => {
+      let res = await request(app)
+        .get("/me/profile")
+        .expect(C.HttpStatusCode.UNAUTHENTICATED);
+    });
 
-  //   it("[401] - Get user-profile with invalid auth-token", async () => {
-  //     let res = await request(app)
-  //       .get("/me/profile")
-  //       .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
-  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
-  //   });
+    it("[401] - Get user-profile with invalid auth-token", async () => {
+      let res = await request(app)
+        .get("/me/profile")
+        .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
+        .expect(C.HttpStatusCode.UNAUTHENTICATED);
+    });
 });

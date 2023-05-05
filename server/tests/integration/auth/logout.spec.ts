@@ -60,16 +60,16 @@ describe("POST /auth/logout", () => {
     expect(res.body).toHaveProperty("message", C.ResponseMessage.ERR_UNAUTHENTICATED);
   });
 
-  // it("[401] - Logging out without token fails", async () => {
-  //   const res = await request(app).post("/auth/logout").expect(C.HttpStatusCode.UNAUTHENTICATED);
+  it("[401] - Logging out without token fails", async () => {
+    const res = await request(app).post("/auth/logout").expect(C.HttpStatusCode.UNAUTHENTICATED);
 
-  //   expect(res.body).toHaveProperty("message", "Invalid token!");
-  // });
+    expect(res.body).toHaveProperty("message", "Invalid token!");
+  });
 
-  // it("[401] - Logging out with invalid token fails", async () => {
-  //   await request(app)
-  //     .post("/auth/logout")
-  //     .set({ authorization: `Bearer INVALID_TOKEN`, "Content-Type": "application/json" })
-  //     .expect(C.HttpStatusCode.UNAUTHENTICATED);
-  // });
+  it("[401] - Logging out with invalid token fails", async () => {
+    await request(app)
+      .post("/auth/logout")
+      .set({ authorization: `Bearer INVALID_TOKEN`, "Content-Type": "application/json" })
+      .expect(C.HttpStatusCode.UNAUTHENTICATED);
+  });
 });

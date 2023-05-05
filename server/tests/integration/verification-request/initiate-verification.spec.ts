@@ -64,26 +64,26 @@ describe("POST /me/account/verification", () => {
     expect(res.body.images).toHaveLength(2);
   });
 
-  //   it("[400] - Initiate verification-request with empty request data", async () => {
-  //     const res = await request(app)
-  //       .post("/me/account/verification")
-  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
-  //       .send()
-  //       .expect(C.HttpStatusCode.BAD_REQUEST);
+    it("[400] - Initiate verification-request with empty request data", async () => {
+      const res = await request(app)
+        .post("/me/account/verification")
+        .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
+        .send()
+        .expect(C.HttpStatusCode.BAD_REQUEST);
 
-  //     expect(res.body).toHaveProperty("message");
-  //   });
+      expect(res.body).toHaveProperty("message");
+    });
 
-  //   it("[401] - Initiate verification-request with invalid token", async () => {
-  //     const res = await request(app)
-  //       .post("/me/account/verification")
-  //       .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "multipart/form-data" })
-  //       .field("idType", IdentificationType.NID)
-  //       .field("idNumber", "ABCD1234")
-  //       .attach("images", `${__dirname}/../../__files__/upload-file.png`)
-  //       .attach("images", `${__dirname}/../../__files__/upload-file.png`)
-  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
+    it("[401] - Initiate verification-request with invalid token", async () => {
+      const res = await request(app)
+        .post("/me/account/verification")
+        .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "multipart/form-data" })
+        .field("idType", IdentificationType.NID)
+        .field("idNumber", "ABCD1234")
+        .attach("images", `${__dirname}/../../__files__/upload-file.png`)
+        .attach("images", `${__dirname}/../../__files__/upload-file.png`)
+        .expect(C.HttpStatusCode.UNAUTHENTICATED);
 
-  //     expect(res.body).toHaveProperty("message");
-  //   });
+      expect(res.body).toHaveProperty("message");
+    });
 });

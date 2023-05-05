@@ -56,74 +56,74 @@ describe("POST /auth/twoFa/verify", () => {
     expect(typeof res.body.token).toEqual("string");
   });
 
-  //   it("[400] - Verify 2FA with empty request object", async () => {
-  //     const res = await request(app)
-  //       .post("/auth/twoFa/verify")
-  //       .send({})
-  //       .expect(C.HttpStatusCode.BAD_REQUEST);
+    it("[400] - Verify 2FA with empty request object", async () => {
+      const res = await request(app)
+        .post("/auth/twoFa/verify")
+        .send({})
+        .expect(C.HttpStatusCode.BAD_REQUEST);
 
-  //     expect(res.body).toHaveProperty("message");
-  //     expect(res.body.data.errors).toHaveLength(1);
-  //     expect(res.body.data.errors[0].path).toEqual("/body/code");
-  //   });
+      expect(res.body).toHaveProperty("message");
+      expect(res.body.data.errors).toHaveLength(1);
+      expect(res.body.data.errors[0].path).toEqual("/body/code");
+    });
 
-  //   it("[400] - Verify 2FA with empty invalid code", async () => {
-  //     const res = await request(app)
-  //       .post("/auth/twoFa/verify")
-  //       .send({ code: 12345 })
-  //       .expect(C.HttpStatusCode.BAD_REQUEST);
+    it("[400] - Verify 2FA with empty invalid code", async () => {
+      const res = await request(app)
+        .post("/auth/twoFa/verify")
+        .send({ code: 12345 })
+        .expect(C.HttpStatusCode.BAD_REQUEST);
 
-  //     expect(res.body).toHaveProperty("message");
-  //     expect(res.body.data.errors).toHaveLength(1);
-  //     expect(res.body.data.errors[0].path).toEqual("/body/code");
-  //   });
+      expect(res.body).toHaveProperty("message");
+      expect(res.body.data.errors).toHaveLength(1);
+      expect(res.body.data.errors[0].path).toEqual("/body/code");
+    });
 
-  //   it("[401] - Verify 2FA with mssing auth-token", async () => {
-  //     const res = await request(app)
-  //       .post("/auth/twoFa/verify")
-  //       .set({ "Content-Type": "application/json" })
-  //       .send({ code: TotpAuthenticator.getTotpCode(twoFaSecret) })
-  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
+    it("[401] - Verify 2FA with mssing auth-token", async () => {
+      const res = await request(app)
+        .post("/auth/twoFa/verify")
+        .set({ "Content-Type": "application/json" })
+        .send({ code: TotpAuthenticator.getTotpCode(twoFaSecret) })
+        .expect(C.HttpStatusCode.UNAUTHENTICATED);
 
-  //       expect(res.body).toHaveProperty("message", "Invalid token!");
-  //   });
+        expect(res.body).toHaveProperty("message", "Invalid token!");
+    });
 
-  //   it("[401] - Verify 2FA with invalid code", async () => {
-  //     userLoginInfo = await AUTH_SERVICE.login(UserMock.getValidUserDataToLogin());
+    it("[401] - Verify 2FA with invalid code", async () => {
+      userLoginInfo = await AUTH_SERVICE.login(UserMock.getValidUserDataToLogin());
 
-  //     const res = await request(app)
-  //       .post("/auth/twoFa/verify")
-  //       .set({ authorization: `Bearer ${userLoginInfo.token}`, "Content-Type": "application/json" })
-  //       .send({ code: "123456" })
-  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
+      const res = await request(app)
+        .post("/auth/twoFa/verify")
+        .set({ authorization: `Bearer ${userLoginInfo.token}`, "Content-Type": "application/json" })
+        .send({ code: "123456" })
+        .expect(C.HttpStatusCode.UNAUTHENTICATED);
 
-  //       expect(res.body).toHaveProperty("message", "2FA code is invalid");
-  //   });
+        expect(res.body).toHaveProperty("message", "2FA code is invalid");
+    });
 
-  //   it("[429] - Verify 2FA severals times with failed attempts", async () => {
-  //     const MAX_NO_OF_REQUEST_PLUS_ONE =
-  //       config.API_RATE_LIMITING[C.ApiRateLimiterType.VERIFY_2FA].limit + 1;
+    it("[429] - Verify 2FA severals times with failed attempts", async () => {
+      const MAX_NO_OF_REQUEST_PLUS_ONE =
+        config.API_RATE_LIMITING[C.ApiRateLimiterType.VERIFY_2FA].limit + 1;
 
-  //     const email = "verify-2fa-rate-limit-email@rate.limit";
+      const email = "verify-2fa-rate-limit-email@rate.limit";
 
-  //     await AUTH_SERVICE.register({ ...UserMock.getValidUserToCreate(), email });
-  //     const user = (await USER_SERVICE.getUserByEmail(email)) as IUser;
+      await AUTH_SERVICE.register({ ...UserMock.getValidUserToCreate(), email });
+      const user = (await USER_SERVICE.getUserByEmail(email)) as IUser;
 
-  //     await USER_SERVICE.markUserAsActive(user._id.toUUIDString());
-  //     const userLoginInfo = await AUTH_SERVICE.login({ ...UserMock.getValidUserDataToLogin(), email});
+      await USER_SERVICE.markUserAsActive(user._id.toUUIDString());
+      const userLoginInfo = await AUTH_SERVICE.login({ ...UserMock.getValidUserDataToLogin(), email});
 
-  //     for (let requestNo = 1; requestNo <= MAX_NO_OF_REQUEST_PLUS_ONE; requestNo++) {
-  //       const res = await request(app)
-  //         .post("/auth/twoFa/verify")
-  //         .set({ authorization: `Bearer ${userLoginInfo.token}`, "Content-Type": "application/json" })
-  //         .send({ code: "000000" });
+      for (let requestNo = 1; requestNo <= MAX_NO_OF_REQUEST_PLUS_ONE; requestNo++) {
+        const res = await request(app)
+          .post("/auth/twoFa/verify")
+          .set({ authorization: `Bearer ${userLoginInfo.token}`, "Content-Type": "application/json" })
+          .send({ code: "000000" });
 
-  //       if (requestNo === MAX_NO_OF_REQUEST_PLUS_ONE) {
-  //         expect(res.status).toBe(C.HttpStatusCode.TOO_MANY_REQUESTS);
-  //       } else {
-  //         expect(res.status).toBe(C.HttpStatusCode.UNAUTHENTICATED);
-  //         expect(res.body).toHaveProperty("message", "2FA code is invalid");
-  //       }
-  //     }
-  //   });
+        if (requestNo === MAX_NO_OF_REQUEST_PLUS_ONE) {
+          expect(res.status).toBe(C.HttpStatusCode.TOO_MANY_REQUESTS);
+        } else {
+          expect(res.status).toBe(C.HttpStatusCode.UNAUTHENTICATED);
+          expect(res.body).toHaveProperty("message", "2FA code is invalid");
+        }
+      }
+    });
 });
