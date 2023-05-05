@@ -19,7 +19,7 @@ User Account Management
 - Nodemailer (Sending emails)
 
 ## SYSTEM DESIGN
-![API-SPEC DISPLAY](./docs/images/system-design.png)
+![API-SPEC DISPLAY](./server/docs/images/system-design.png)
 
 ## HOW TO RUN THE BACK-END APP 
 - Clone github repository
@@ -41,5 +41,5 @@ User Account Management
 ```
 API documentation (reference `/server/spec/api-spec.yml`)
 ```
-![API-SPEC DISPLAY](./docs/images/api-spec-display-1.png)
-![API-SPEC DISPLAY](./docs/images/api-spec-display-2.png)
+![API-SPEC DISPLAY](./server/docs/images/api-spec-display-1.png)
+![API-SPEC DISPLAY](./server/docs/images/api-spec-display-2.png)
