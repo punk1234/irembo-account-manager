@@ -5,30 +5,30 @@ export class UserMock {
   static getValidUserToCreate() {
     return {
       email: "valid-email@email.com",
-      password: "abcd#1234",
-      isAdmin: false,
+      password: "Abcd#1234",
+      countryCode: "NG",
     };
   }
 
-  static getValidAdminToCreate() {
+  private static getValidAdminToCreate() {
     return {
       email: "admin-email@email.com",
-      password: "abcd#1234",
-      isAdmin: true,
+      password: "Abcd#1234",
+      countryCode: true,
     };
   }
 
   static getValidUserDataToLogin() {
     return {
       ...this.getValidUserToCreate(),
-      isAdmin: undefined,
+      countryCode: undefined,
     };
   }
 
   static getValidAdminDataToLogin() {
     return {
       ...this.getValidAdminToCreate(),
-      isAdmin: undefined,
+      countryCode: undefined,
     };
   }
 
@@ -36,14 +36,21 @@ export class UserMock {
     return {
       email: "invalid-email.com",
       password: "ab",
-      isAdmin: "goat",
+      countryCode: "1",
     };
   }
 
   static getInvalidUserToLogin() {
     return {
       ...this.getInvalidUserToCreate(),
-      isAdmin: undefined,
+      countryCode: undefined,
+    };
+  }
+
+  static getValidUserVerifyAccountToken() {
+    return {
+      value: "ABCD1234ABCD1234ABCD1234ABCD1234ABCD1234",
+      encoded: "",
     };
   }
 }

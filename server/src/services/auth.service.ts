@@ -156,7 +156,7 @@ export class AuthService {
    * @returns {IGeneratedUserToken}
    */
   // TODO: MOVE THIS TO TOKEN-SERVICE
-  private generateToken(userId: string): IGeneratedUserToken {
+  generateToken(userId: string): IGeneratedUserToken {
     const TOKEN = crypto.randomBytes(30).toString("base64");
 
     /** NOTE: TOTAL OF (36+1+40+1=78%3=0), SO THERE'S NO PADDING OF `=` or `==` AT THE END */
@@ -263,6 +263,11 @@ export class AuthService {
       (await QrCode.toDataURL(TotpAuthenticator.getQrCode(TWO_FA_SECRET, data.email)));
 
     RateLimitManager.reset(user.email, C.ApiRateLimiterType.AUTH_LOGIN).catch();
+    await this.sessionService.registerSession(
+      user._id.toUUIDString(),
+      AUTH_TOKEN_PAYLOAD.sessionId,
+    );
+
     return { user, token: AUTH_TOKEN, twoFaSetupCode } as LoginResponse;
   }
 
