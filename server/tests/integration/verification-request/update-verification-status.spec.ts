@@ -92,27 +92,27 @@ describe("PUT /me/account/verification/status", () => {
       .expect(C.HttpStatusCode.NOT_FOUND);
   });
 
-  //   it("[400] - Update verification status with empty request data", async () => {
-  //     const res = await request(app)
-  //       .put(`/users/${user._id.toUUIDString()}/account/verification/status`)
-  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
-  //       .send({})
-  //       .expect(C.HttpStatusCode.BAD_REQUEST);
-  //   });
+    it("[400] - Update verification status with empty request data", async () => {
+      const res = await request(app)
+        .put(`/users/${user._id.toUUIDString()}/account/verification/status`)
+        .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
+        .send({})
+        .expect(C.HttpStatusCode.BAD_REQUEST);
+    });
 
-  //   it("[401] - Update verification status with invalid auth-token", async () => {
-  //     const res = await request(app)
-  //       .put(`/users/${user._id.toUUIDString()}/account/verification/status`)
-  //       .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
-  //       .send({ status: VerificationStatus.VERIFIED })
-  //       .expect(C.HttpStatusCode.UNAUTHENTICATED);
-  //   });
+    it("[401] - Update verification status with invalid auth-token", async () => {
+      const res = await request(app)
+        .put(`/users/${user._id.toUUIDString()}/account/verification/status`)
+        .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
+        .send({ status: VerificationStatus.VERIFIED })
+        .expect(C.HttpStatusCode.UNAUTHENTICATED);
+    });
 
-  //   it("[403] - Update verification status with non-admin auth-token", async () => {
-  //     const res = await request(app)
-  //       .put(`/users/${user._id.toUUIDString()}/account/verification/status`)
-  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
-  //       .send({ status: VerificationStatus.VERIFIED })
-  //       .expect(C.HttpStatusCode.UNAUTHORIZED);
-  //   });
+    it("[403] - Update verification status with non-admin auth-token", async () => {
+      const res = await request(app)
+        .put(`/users/${user._id.toUUIDString()}/account/verification/status`)
+        .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
+        .send({ status: VerificationStatus.VERIFIED })
+        .expect(C.HttpStatusCode.UNAUTHORIZED);
+    });
 });

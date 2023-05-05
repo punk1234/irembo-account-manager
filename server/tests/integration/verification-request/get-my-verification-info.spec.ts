@@ -59,38 +59,38 @@ describe("GET /me/profile", () => {
     expect(res.body).toHaveProperty("success", false);
   });
 
-  //   it("[200] - Get my verification info. with valid auth-token & verification", async () => {
-  //     let res = await request(app)
-  //       .post("/me/account/verification")
-  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
-  //       .field("idType", IdentificationType.NID)
-  //       .field("idNumber", "ABCD1234")
-  //       .attach("images", `${__dirname}/../../__files__/upload-file.png`)
-  //       .attach("images", `${__dirname}/../../__files__/upload-file.png`)
-  //       .expect(C.HttpStatusCode.SUCCESS);
+    it("[200] - Get my verification info. with valid auth-token & verification", async () => {
+      let res = await request(app)
+        .post("/me/account/verification")
+        .set({ authorization: `Bearer ${authToken}`, "Content-Type": "multipart/form-data" })
+        .field("idType", IdentificationType.NID)
+        .field("idNumber", "ABCD1234")
+        .attach("images", `${__dirname}/../../__files__/upload-file.png`)
+        .attach("images", `${__dirname}/../../__files__/upload-file.png`)
+        .expect(C.HttpStatusCode.SUCCESS);
 
-  //     res = await request(app)
-  //       .get("/me/account/verification")
-  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
-  //       .expect(C.HttpStatusCode.SUCCESS);
+      res = await request(app)
+        .get("/me/account/verification")
+        .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
+        .expect(C.HttpStatusCode.SUCCESS);
 
-  //     expect(res.body).toHaveProperty("success", true);
-  //     expect(res.body.data).toHaveProperty("idType", IdentificationType.NID);
-  //     expect(res.body.data).toHaveProperty("idNumber", "ABCD1234");
-  //     expect(res.body.data).toHaveProperty("status", "PENDING");
-  //     expect(res.body.data.images).toHaveLength(2);
-  //   });
+      expect(res.body).toHaveProperty("success", true);
+      expect(res.body.data).toHaveProperty("idType", IdentificationType.NID);
+      expect(res.body.data).toHaveProperty("idNumber", "ABCD1234");
+      expect(res.body.data).toHaveProperty("status", "PENDING");
+      expect(res.body.data.images).toHaveLength(2);
+    });
 
-  //     it("[401] - Get my verification info. with missing auth-token", async () => {
-  //       let res = await request(app)
-  //         .get("/me/account/verification")
-  //         .expect(C.HttpStatusCode.UNAUTHENTICATED);
-  //     });
+      it("[401] - Get my verification info. with missing auth-token", async () => {
+        let res = await request(app)
+          .get("/me/account/verification")
+          .expect(C.HttpStatusCode.UNAUTHENTICATED);
+      });
 
-  //     it("[401] - Get my verification info. with invalid auth-token", async () => {
-  //       let res = await request(app)
-  //         .get("/me/account/verification")
-  //         .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
-  //         .expect(C.HttpStatusCode.UNAUTHENTICATED);
-  //     });
+      it("[401] - Get my verification info. with invalid auth-token", async () => {
+        let res = await request(app)
+          .get("/me/account/verification")
+          .set({ authorization: "Bearer INVALID-TOKEN", "Content-Type": "application/json" })
+          .expect(C.HttpStatusCode.UNAUTHENTICATED);
+      });
 });

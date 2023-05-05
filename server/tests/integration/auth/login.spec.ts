@@ -46,96 +46,96 @@ describe("POST /auth/login", () => {
     expect(typeof res.body.token).toEqual("string");
   });
 
-  // it("[200] - Login user with valid data (passwordless)", async () => {
-  //   const reqSpy = jest.spyOn(EMAIL_SERVICE, "sendPasswordlessLoginLink");
+  it("[200] - Login user with valid data (passwordless)", async () => {
+    const reqSpy = jest.spyOn(EMAIL_SERVICE, "sendPasswordlessLoginLink");
 
-  //   const res = await request(app)
-  //     .post("/auth/login")
-  //     .send({ email: UserMock.getValidUserDataToLogin().email })
-  //     .expect(C.HttpStatusCode.SUCCESS);
+    const res = await request(app)
+      .post("/auth/login")
+      .send({ email: UserMock.getValidUserDataToLogin().email })
+      .expect(C.HttpStatusCode.SUCCESS);
 
-  //   expect(reqSpy).toHaveBeenCalledTimes(1);
-  //   expect(res.body.isPasswordless).toEqual(true);
-  // });
+    expect(reqSpy).toHaveBeenCalledTimes(1);
+    expect(res.body.isPasswordless).toEqual(true);
+  });
 
-  // it("[400] - Login user with empty request object (with password)", async () => {
-  //   const res = await request(app)
-  //     .post("/auth/login")
-  //     .send({})
-  //     .expect(C.HttpStatusCode.BAD_REQUEST);
+  it("[400] - Login user with empty request object (with password)", async () => {
+    const res = await request(app)
+      .post("/auth/login")
+      .send({})
+      .expect(C.HttpStatusCode.BAD_REQUEST);
 
-  //   expect(res.body).toHaveProperty("message");
-  //   expect(res.body.data.errors).toHaveLength(1);
-  //   expect(res.body.data.errors[0].path).toEqual("/body/email");
-  //   // expect(res.body.data.errors[1].path).toEqual("/body/password");
-  // });
+    expect(res.body).toHaveProperty("message");
+    expect(res.body.data.errors).toHaveLength(1);
+    expect(res.body.data.errors[0].path).toEqual("/body/email");
+    // expect(res.body.data.errors[1].path).toEqual("/body/password");
+  });
 
-  // it("[400] - Login user with invalid email & password request object (with password)", async () => {
-  //   const res = await request(app)
-  //     .post("/auth/login")
-  //     .send(UserMock.getInvalidUserToLogin())
-  //     .expect(C.HttpStatusCode.BAD_REQUEST);
+  it("[400] - Login user with invalid email & password request object (with password)", async () => {
+    const res = await request(app)
+      .post("/auth/login")
+      .send(UserMock.getInvalidUserToLogin())
+      .expect(C.HttpStatusCode.BAD_REQUEST);
 
-  //   expect(res.body).toHaveProperty("message");
-  //   expect(res.body.data.errors).toHaveLength(2);
-  //   expect(res.body.data.errors[0].path).toEqual("/body/email");
-  //   expect(res.body.data.errors[1].path).toEqual("/body/password");
-  // });
+    expect(res.body).toHaveProperty("message");
+    expect(res.body.data.errors).toHaveLength(2);
+    expect(res.body.data.errors[0].path).toEqual("/body/email");
+    expect(res.body.data.errors[1].path).toEqual("/body/password");
+  });
 
-  // it("[401] - Login user with invalid password", async () => {
-  //   const res = await request(app)
-  //     .post("/auth/login")
-  //     .send({
-  //       email: user.email,
-  //       password: `${UserMock.getValidUserToCreate().password}-wrong`,
-  //     })
-  //     .expect(C.HttpStatusCode.UNAUTHENTICATED);
+  it("[401] - Login user with invalid password", async () => {
+    const res = await request(app)
+      .post("/auth/login")
+      .send({
+        email: user.email,
+        password: `${UserMock.getValidUserToCreate().password}-wrong`,
+      })
+      .expect(C.HttpStatusCode.UNAUTHENTICATED);
 
-  //   expect(res.body).toHaveProperty("message", "Invalid user credentials!");
-  // });
+    expect(res.body).toHaveProperty("message", "Invalid user credentials!");
+  });
 
-  // it("[401] - Login user with email that does not exist (confirm 404 is not returned for security)", async () => {
-  //   const res = await request(app)
-  //     .post("/auth/login")
-  //     .send({ email: "user.email@not-found.com", password: "p@ssword" })
-  //     .expect(C.HttpStatusCode.UNAUTHENTICATED);
+  it("[401] - Login user with email that does not exist (confirm 404 is not returned for security)", async () => {
+    const res = await request(app)
+      .post("/auth/login")
+      .send({ email: "user.email@not-found.com", password: "p@ssword" })
+      .expect(C.HttpStatusCode.UNAUTHENTICATED);
 
-  //   expect(res.body).toHaveProperty("message", "Invalid user credentials!");
-  // });
+    expect(res.body).toHaveProperty("message", "Invalid user credentials!");
+  });
 
-  // it("[401] - Login user that has not verified account", async () => {
-  //   const email = UserMock.getValidUserToCreate().email + "xyz"
+  it("[401] - Login user that has not verified account", async () => {
+    const email = UserMock.getValidUserToCreate().email + "xyz"
 
-  //   await AUTH_SERVICE.register({ ...UserMock.getValidUserToCreate(), email });
+    await AUTH_SERVICE.register({ ...UserMock.getValidUserToCreate(), email });
 
-  //   const res = await request(app)
-  //     .post("/auth/login")
-  //     .send({ email, password: UserMock.getValidUserToCreate().password })
-  //     .expect(C.HttpStatusCode.UNAUTHENTICATED);
+    const res = await request(app)
+      .post("/auth/login")
+      .send({ email, password: UserMock.getValidUserToCreate().password })
+      .expect(C.HttpStatusCode.UNAUTHENTICATED);
 
-  //   expect(res.body).toHaveProperty("message", "Invalid user credentials!");
-  // });
+    expect(res.body).toHaveProperty("message", "Invalid user credentials!");
+  });
 
-  // it("[429] - Logging in severals times with failed attempts", async () => {
-  //   const MAX_NO_OF_REQUEST_PLUS_ONE =
-  //     config.API_RATE_LIMITING[C.ApiRateLimiterType.AUTH_LOGIN].limit + 1;
+  it("[429] - Logging in severals times with failed attempts", async () => {
+    const MAX_NO_OF_REQUEST_PLUS_ONE =
+      config.API_RATE_LIMITING[C.ApiRateLimiterType.AUTH_LOGIN].limit + 1;
 
-  //   const email = "login-rate-limit-email@rate.limit";
+    const email = "login-rate-limit-email@rate.limit";
 
-  //   await AUTH_SERVICE.register({ ...UserMock.getValidUserToCreate(), email });
-  //   user = (await USER_SERVICE.getUserByEmail(email)) as IUser;
+    await AUTH_SERVICE.register({ ...UserMock.getValidUserToCreate(), email });
+    user = (await USER_SERVICE.getUserByEmail(email)) as IUser;
 
-  //   for (let requestNo = 1; requestNo <= MAX_NO_OF_REQUEST_PLUS_ONE; requestNo++) {
-  //     const res = await request(app)
-  //       .post("/auth/login")
-  //       .send({ email, password: `${UserMock.getValidUserToCreate().password}-wrong` });
+    for (let requestNo = 1; requestNo <= MAX_NO_OF_REQUEST_PLUS_ONE; requestNo++) {
+      const res = await request(app)
+        .post("/auth/login")
+        .send({ email, password: `${UserMock.getValidUserToCreate().password}-wrong` });
 
-  //     if (requestNo === MAX_NO_OF_REQUEST_PLUS_ONE) {
-  //       expect(res.status).toBe(C.HttpStatusCode.TOO_MANY_REQUESTS);
-  //     } else {
-  //       expect(res.status).toBe(C.HttpStatusCode.UNAUTHENTICATED);
-  //       expect(res.body).toHaveProperty("message", "Invalid user credentials!");
-  //     }
-  //   }
-  // });
+      if (requestNo === MAX_NO_OF_REQUEST_PLUS_ONE) {
+        expect(res.status).toBe(C.HttpStatusCode.TOO_MANY_REQUESTS);
+      } else {
+        expect(res.status).toBe(C.HttpStatusCode.UNAUTHENTICATED);
+        expect(res.body).toHaveProperty("message", "Invalid user credentials!");
+      }
+    }
+  });
 });
