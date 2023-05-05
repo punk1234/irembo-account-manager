@@ -68,4 +68,8 @@ export class UserMock {
       encoded: "",
     };
   }
+
+  static getValidEmail() {
+    return "valid-email@irembo.com";
+  }
 }
