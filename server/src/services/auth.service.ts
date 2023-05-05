@@ -164,8 +164,8 @@ export class AuthService {
       crypto.randomBytes(6).toString("base64") + // RANDOM UNUSED TOKEN (8 chars)
       Buffer.from(`${userId}@${TOKEN}I`).toString("base64");
 
-    console.debug("TOKEN", TOKEN.length, TOKEN);
-    console.debug("ENCODED_TOKEN", ENCODED_TOKEN);
+    // console.debug("TOKEN", TOKEN.length, TOKEN);
+    // console.debug("ENCODED_TOKEN", ENCODED_TOKEN);
 
     return {
       value: TOKEN,
@@ -286,7 +286,6 @@ export class AuthService {
       crypto.randomUUID().substr(0, 8) +
       authToken.substring(authToken.length - 10);
 
-    console.debug(authToken); // TODO: TO BE REMOVED
     const LOGIN_LINK = `${config.WEB_APP_URL}/auth/passwordless?code=${authToken}`;
 
     RateLimitManager.reset(user.email, C.ApiRateLimiterType.AUTH_LOGIN).catch();

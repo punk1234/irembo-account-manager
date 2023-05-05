@@ -50,11 +50,18 @@ export class EmailService {
         from: FROM_MAIL_INFO,
         to: toEmail,
         subject,
-        text: message,
+        html: message,
       })
       .catch(Logger.error);
   }
 
+  /**
+   * @method sendWelcomeAndActivationMsg
+   * @instance
+   * @param {string} toEmail
+   * @param {string} activationLink
+   * @param {string} name
+   */
   sendWelcomeAndActivationMsg(toEmail: string, activationLink: string, name?: string): void {
     this.send(
       toEmail,
@@ -65,6 +72,13 @@ export class EmailService {
     );
   }
 
+  /**
+   * @method sendPasswordlessLoginLink
+   * @instance
+   * @param {string} toEmail
+   * @param {string} loginLink
+   * @param {string} name
+   */
   sendPasswordlessLoginLink(toEmail: string, loginLink: string, name?: string): void {
     this.send(
       toEmail,
@@ -75,6 +89,13 @@ export class EmailService {
     );
   }
 
+  /**
+   * @method sendPasswordResetLink
+   * @instance
+   * @param {string} toEmail
+   * @param {string} resetLink
+   * @param {string} name
+   */
   sendPasswordResetLink(toEmail: string, resetLink: string, name?: string): void {
     this.send(
       toEmail,
