@@ -1,18 +1,21 @@
 import { Outlet } from "react-router-dom";
 import styled from "styled-components";
 import { Header, SideBar } from "../components";
+import { Navigation } from "./context/Navigation";
 
 export const RootAppShell = () => {
   return (
-    <AppMain>
-      <SideBar />
-      <AppBody>
-        <Header />
-        <AppContent>
-          <Outlet />
-        </AppContent>
-      </AppBody>
-    </AppMain>
+    <Navigation>
+      <AppMain>
+        <SideBar />
+        <AppBody>
+          <Header />
+          <AppContent>
+            <Outlet />
+          </AppContent>
+        </AppBody>
+      </AppMain>
+    </Navigation>
   );
 };
 

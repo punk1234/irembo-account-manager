@@ -1,11 +1,23 @@
-import QRCode from "react-qr-code";
+import { useNavigate } from "react-router-dom";
+import {
+  QrCodeButton,
+  QrCodeContainer,
+  QrCodeImage,
+} from "./QRCodeGenerator.styles";
 
 interface IQRCodeGenerator {
-  qrValue: any
+  qrValue: any;
 }
 
-export const QRCodeGenerator = ({qrValue}:IQRCodeGenerator ) => {
+export const QRCodeGenerator = ({ qrValue }: IQRCodeGenerator) => {
+  const navigate = useNavigate();
+
   return (
-    <QRCode value={qrValue}/>
-  )
-}
+    <QrCodeContainer>
+      <QrCodeImage src={qrValue} />
+      <QrCodeButton type="button" onClick={() => navigate("/verify-otp")}>
+        Done
+      </QrCodeButton>
+    </QrCodeContainer>
+  );
+};

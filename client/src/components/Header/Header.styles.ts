@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Image } from "../Image/Image";
 
 export const HeaderWrapper = styled.header`
   position: sticky;
@@ -25,7 +26,7 @@ export const NavItems = styled.section`
   gap: 30px;
 `;
 
-export const UserProfile = styled.div`
+export const UserProfile = styled(Image)`
   height: 40px;
   width: 40px;
   border-radius: 50%;
@@ -33,9 +34,6 @@ export const UserProfile = styled.div`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  background-color: var(--faint-black);
-  color: var(--white);
-  box-shadow: 0px 12px 28px rgba(33, 39, 73, 0.2);
 `;
 
 export const ProjectDropDown = styled.div`
