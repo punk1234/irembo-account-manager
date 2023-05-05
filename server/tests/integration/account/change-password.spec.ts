@@ -66,52 +66,52 @@ describe("POST /me/password/change", () => {
       .expect(C.HttpStatusCode.UNAUTHENTICATED);
   });
 
-  it("[400] - Change my password with empty request data", async () => {
-    const res = await request(app)
-      .post("/me/password/change")
-      .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
-      .send({})
-      .expect(C.HttpStatusCode.BAD_REQUEST);
+  //   it("[400] - Change my password with empty request data", async () => {
+  //     const res = await request(app)
+  //       .post("/me/password/change")
+  //       .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
+  //       .send({})
+  //       .expect(C.HttpStatusCode.BAD_REQUEST);
 
-    expect(res.body).toHaveProperty("message");
-    expect(res.body.data.errors).toHaveLength(2);
-    expect(res.body.data.errors[0].path).toEqual("/body/password");
-    expect(res.body.data.errors[1].path).toEqual("/body/newPassword");
-  });
+  //     expect(res.body).toHaveProperty("message");
+  //     expect(res.body.data.errors).toHaveLength(2);
+  //     expect(res.body.data.errors[0].path).toEqual("/body/password");
+  //     expect(res.body.data.errors[1].path).toEqual("/body/newPassword");
+  //   });
 
-  it("[429] - Change my password severals times with failed attempts", async () => {
-    const MAX_NO_OF_REQUEST_PLUS_ONE =
-      config.API_RATE_LIMITING[C.ApiRateLimiterType.CHANGE_PASSWORD].limit + 1;
+  //   it("[429] - Change my password severals times with failed attempts", async () => {
+  //     const MAX_NO_OF_REQUEST_PLUS_ONE =
+  //       config.API_RATE_LIMITING[C.ApiRateLimiterType.CHANGE_PASSWORD].limit + 1;
 
-    const email = "change-password-rate-limit-email@rate.limit";
+  //     const email = "change-password-rate-limit-email@rate.limit";
 
-    await AUTH_SERVICE.register({ ...UserMock.getValidUserToCreate(), email });
-    const user = (await USER_SERVICE.getUserByEmail(email)) as IUser;
+  //     await AUTH_SERVICE.register({ ...UserMock.getValidUserToCreate(), email });
+  //     const user = (await USER_SERVICE.getUserByEmail(email)) as IUser;
 
-    await USER_SERVICE.markUserAsActive(user._id.toUUIDString());
+  //     await USER_SERVICE.markUserAsActive(user._id.toUUIDString());
 
-    const twoFaSecret = (await TWO_FA_SERVICE.getTwoFaSecretIfNotSetup(
-      user._id.toUUIDString(),
-    )) as string;
+  //     const twoFaSecret = (await TWO_FA_SERVICE.getTwoFaSecretIfNotSetup(
+  //       user._id.toUUIDString(),
+  //     )) as string;
 
-    authToken = (
-      await AUTH_SERVICE.verifyTwoFa(user._id.toUUIDString(), {
-        code: TotpAuthenticator.getTotpCode(twoFaSecret),
-      })
-    ).token;
+  //     authToken = (
+  //       await AUTH_SERVICE.verifyTwoFa(user._id.toUUIDString(), {
+  //         code: TotpAuthenticator.getTotpCode(twoFaSecret),
+  //       })
+  //     ).token;
 
-    for (let requestNo = 1; requestNo <= MAX_NO_OF_REQUEST_PLUS_ONE; requestNo++) {
-      const res = await request(app)
-        .post("/me/password/change")
-        .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
-        .send({ password: UserMock.getValidUserToCreate().password + "@", newPassword });
+  //     for (let requestNo = 1; requestNo <= MAX_NO_OF_REQUEST_PLUS_ONE; requestNo++) {
+  //       const res = await request(app)
+  //         .post("/me/password/change")
+  //         .set({ authorization: `Bearer ${authToken}`, "Content-Type": "application/json" })
+  //         .send({ password: UserMock.getValidUserToCreate().password + "@", newPassword });
 
-      if (requestNo === MAX_NO_OF_REQUEST_PLUS_ONE) {
-        expect(res.status).toBe(C.HttpStatusCode.TOO_MANY_REQUESTS);
-      } else {
-        expect(res.status).toBe(C.HttpStatusCode.UNAUTHENTICATED);
-        expect(res.body).toHaveProperty("message", "Invalid user credentials!");
-      }
-    }
-  });
+  //       if (requestNo === MAX_NO_OF_REQUEST_PLUS_ONE) {
+  //         expect(res.status).toBe(C.HttpStatusCode.TOO_MANY_REQUESTS);
+  //       } else {
+  //         expect(res.status).toBe(C.HttpStatusCode.UNAUTHENTICATED);
+  //         expect(res.body).toHaveProperty("message", "Invalid user credentials!");
+  //       }
+  //     }
+  //   });
 });

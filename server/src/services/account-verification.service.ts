@@ -23,26 +23,27 @@ export class AccountVerificationService {
    * @param {string} userId
    * @param {InitiateAccountVerificationDto} data
    * @param {Array<IFileUploadData>} uploadData
-   * @returns {Promise<IUser>}
+   * @returns {Promise<IAccountVerification>}
    */
   async initiateAccountVerification(
     userId: string,
     data: InitiateAccountVerificationDto,
     uploadData: Array<IFileUploadData>,
-  ): Promise<void> {
+  ): Promise<IAccountVerification> {
     const uploadUrls = await this.fileManager.uploadFiles(
       uploadData,
       config.VERIFICATION_DOCS_BUCKET,
     );
 
-    // NOTE: CAN USER `Promise.all` FOR THE NEXT OPERATIONS
-    await AccountVerificationModel.findOneAndUpdate(
+    // NOTE: CAN USE `Promise.all` FOR THE NEXT OPERATIONS
+    const accountVerification = await AccountVerificationModel.findOneAndUpdate(
       { _id: userId },
       { ...data, status: VerificationStatus.PENDING, images: uploadUrls },
-      { upsert: true },
+      { upsert: true, new: true },
     );
 
     await this.userService.setVerifiedValue(userId);
+    return accountVerification;
   }
 
   /**

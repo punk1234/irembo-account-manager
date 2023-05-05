@@ -28,13 +28,13 @@ export class AccountVerificationController {
     this.identityDocVerifier.verifyUserDocument(data.idNumber, data.idType);
     const UPLOAD_DATA = FileHelper.toUploadData(req.files as Express.Multer.File[]);
 
-    await this.accountVerificationService.initiateAccountVerification(
+    const REQUEST = await this.accountVerificationService.initiateAccountVerification(
       req.auth?.userId as string,
       req.body as InitiateAccountVerificationDto,
       UPLOAD_DATA,
     );
 
-    ResponseHandler.ok(res, { success: true });
+    ResponseHandler.ok(res, REQUEST);
   }
 
   /**
@@ -62,7 +62,7 @@ export class AccountVerificationController {
       (req.body as UpdateAccountVerificationStatusDto).status,
     );
 
-    ResponseHandler.ok(res, { success: verificationInfo });
+    ResponseHandler.ok(res, verificationInfo);
   }
 
   /**
